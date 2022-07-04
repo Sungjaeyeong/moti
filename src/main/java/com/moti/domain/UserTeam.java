@@ -19,4 +19,15 @@ public class UserTeam {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
     private Team team;
+
+    // 연관관계 메서드
+    public void setUser(User user) {
+        this.user = user;
+        user.getUserTeams().add(this);
+    }
+
+    public void setTeam(Team team) {
+        this.team = team;
+        team.getUserTeams().add(this);
+    }
 }

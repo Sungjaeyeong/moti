@@ -17,4 +17,10 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chat_id")
     private Chat chat;
+
+    // 연관관계 메서드
+    public void setChat(Chat chat) {
+        this.chat = chat;
+        chat.getMessages().add(this);
+    }
 }
