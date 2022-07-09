@@ -1,5 +1,6 @@
-package com.moti.domain;
+package com.moti.domain.team;
 
+import com.moti.domain.user.entity.UserTeam;
 import lombok.Getter;
 
 import javax.persistence.*;

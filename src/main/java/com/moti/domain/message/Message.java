@@ -1,5 +1,6 @@
-package com.moti.domain;
+package com.moti.domain.message;
 
+import com.moti.domain.chat.Chat;
 import lombok.Getter;
 
 import javax.persistence.*;

@@ -1,5 +1,7 @@
-package com.moti.domain;
+package com.moti.domain.user.entity;
 
+import com.moti.domain.chat.Chat;
+import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -26,6 +28,13 @@ public class UserChat {
     }
 
     public void setChat(Chat chat) {
+        this.chat = chat;
+        chat.getUserChats().add(this);
+    }
+
+    public void setUserAndChat(User user, Chat chat) {
+        this.user = user;
+        user.getUserChats().add(this);
         this.chat = chat;
         chat.getUserChats().add(this);
     }

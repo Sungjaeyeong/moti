@@ -1,5 +1,8 @@
-package com.moti.domain;
+package com.moti.domain.post;
 
+import com.moti.domain.user.entity.User;
+import com.moti.domain.comment.Comment;
+import com.moti.domain.file.File;
 import lombok.Getter;
 
 import javax.persistence.*;

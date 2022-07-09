@@ -1,5 +1,7 @@
-package com.moti.domain;
+package com.moti.domain.user.entity;
 
+import com.moti.domain.team.Team;
+import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -27,6 +29,13 @@ public class UserTeam {
     }
 
     public void setTeam(Team team) {
+        this.team = team;
+        team.getUserTeams().add(this);
+    }
+
+    public void setUserAndTeam(User user, Team team) {
+        this.user = user;
+        user.getUserTeams().add(this);
         this.team = team;
         team.getUserTeams().add(this);
     }
