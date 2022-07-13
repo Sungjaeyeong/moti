@@ -1,10 +1,8 @@
 package com.moti.web.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moti.domain.user.UserRepository;
 import com.moti.domain.user.entity.Job;
 import com.moti.web.user.dto.AddUserDto;
-import com.moti.web.user.dto.AddUserResponseDto;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -21,12 +18,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@Transactional
 class UserControllerTest {
 
     @Autowired ObjectMapper objectMapper;
     @Autowired MockMvc mockMvc;
-    @Autowired
-    UserRepository userRepository;
 
     @Test
     @DisplayName("회원가입 컨트롤러 성공")

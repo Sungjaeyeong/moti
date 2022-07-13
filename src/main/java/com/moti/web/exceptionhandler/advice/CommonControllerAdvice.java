@@ -1,5 +1,6 @@
 package com.moti.web.exceptionhandler.advice;
 
+import com.moti.web.exception.NotMatchUserException;
 import com.moti.web.exceptionhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -8,8 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import java.util.HashMap;
 
 @Slf4j
 @RestControllerAdvice
@@ -26,6 +25,14 @@ public class CommonControllerAdvice {
         }
 
         return errorResult;
+    }
+
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ExceptionHandler
+    public ErrorResult methodExHandle(NotMatchUserException e) {
+        log.error("[exceptionHandle] exception", e);
+
+        return new ErrorResult("401", "유저가 존재하지 않습니다.");
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
