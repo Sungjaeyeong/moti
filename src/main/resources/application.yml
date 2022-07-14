@@ -1,4 +1,7 @@
 spring:
+  messages:
+    basename: messages, errors
+
   datasource:
     url: jdbc:h2:tcp://localhost/~/moti;
     username: sa

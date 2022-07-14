@@ -67,6 +67,29 @@ class LoginControllerTest {
     }
 
     @Test
+    @DisplayName("로그인 시 이메일은 필수 값 입니다.")
+    public void login_requiredEmail() throws Exception {
+        // given
+        LoginRequestDto request = LoginRequestDto.builder()
+                .email("")
+                .pw("aaaaa")
+                .build();
+
+        String json = objectMapper.writeValueAsString(request);
+
+        // when, then
+        mockMvc.perform(post("/login")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json)
+                )
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("잘못된 요청입니다."))
+                .andExpect(jsonPath("$.validation.email").value("이메일은 필수 입력값입니다."))
+                .andDo(print());
+
+    }
+
+    @Test
     @DisplayName("비밀번호 오류 시 로그인 실패 - 컨트롤러")
     public void failed_login() throws Exception {
         // given

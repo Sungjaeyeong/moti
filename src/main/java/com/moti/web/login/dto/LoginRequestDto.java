@@ -10,11 +10,11 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class LoginRequestDto {
 
-    @NotBlank(message = "이메일은 필수 입력값입니다.")
+    @NotBlank
     @Email
     private String email;
 
-    @NotBlank(message = "비밀번호는 필수 입력값입니다.")
+    @NotBlank
     @Length(min = 5, max = 20)
     private String pw;
 

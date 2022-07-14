@@ -12,19 +12,19 @@ import javax.validation.constraints.*;
 @ToString
 public class AddUserDto {
 
-    @NotBlank(message = "이메일은 필수 입력값입니다.")
+    @NotBlank
     @Email
     private String email;
 
-    @NotBlank(message = "비밀번호는 필수 입력값입니다.")
+    @NotBlank
     @Length(min = 5, max = 20)
     private String pw;
 
-    @NotBlank(message = "이름은 필수 입력값입니다.")
+    @NotBlank
     @Length(max = 10)
     private String name;
 
-    @NotNull(message = "직업은 필수 입력값입니다.")
+    @NotNull
     private Job job;
 
     protected AddUserDto() {

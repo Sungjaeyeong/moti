@@ -8,6 +8,7 @@ import com.moti.web.login.dto.LoginRequestDto;
 import com.moti.web.login.dto.LoginResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,7 +17,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class LoginController {
     private final LoginService loginService;
 
     @PostMapping("/login")
-    public LoginResponseDto login(@RequestBody @Valid LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
+    public LoginResponseDto login(@RequestBody @Validated LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
 
         log.info("loginRequestDto: {}", loginRequestDto);
 
