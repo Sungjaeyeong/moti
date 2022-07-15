@@ -38,18 +38,22 @@ class LoginServiceTest {
     }
 
     @Test
-    @DisplayName("로그인 실패 - 서비스")
-    public void failed_login() throws Exception {
-        // when
-        User notEqualPwUser = loginService.login("aaa@gmail.com", "aaaaaaa");
-        try {
-            loginService.login("bbb@gmail.com", "abcdef");
-        } catch (IndexOutOfBoundsException e) {
-            return;
-        }
+    @DisplayName("로그인 실패(이메일 틀림) - 서비스")
+    public void failed_login1() throws Exception {
+        //when
+        User notEqualPwUser = loginService.login("bbb@gmail.com", "aaaaaaa");
 
         // then
         Assertions.assertThat(notEqualPwUser).isEqualTo(null);
-        fail("예외가 발생해야함.");
+    }
+
+    @Test
+    @DisplayName("로그인 실패(비밀번호 틀림) - 서비스")
+    public void failed_login2() throws Exception {
+        // when
+        User notEqualPwUser = loginService.login("aaa@gmail.com", "aaaaaaa");
+
+        // then
+        Assertions.assertThat(notEqualPwUser).isEqualTo(null);
     }
 }

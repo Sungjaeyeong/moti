@@ -15,6 +15,9 @@ public class LoginService {
 
     public User login(String email, String password) {
         List<User> userList = userRepository.findByEmail(email);
+        if (userList.size() == 0) {
+            return null;
+        }
         if (userList.get(0).getPassword().equals(password)) {
             return userList.get(0);
         } else {
