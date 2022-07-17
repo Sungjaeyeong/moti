@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
@@ -34,7 +35,7 @@ class UserServiceTest {
         Long joinUserId = userService.join(user);
 
         // then
-        Assertions.assertThat(user).isEqualTo(userRepository.findOne(joinUserId));
+        assertThat(user).isEqualTo(userRepository.findOne(joinUserId));
     }
 
     @Test
@@ -59,6 +60,25 @@ class UserServiceTest {
         userService.join(user1);
         IllegalStateException e = assertThrows(IllegalStateException.class, () -> userService.join(user2));
 
-        Assertions.assertThat(e.getMessage()).isEqualTo("이미 사용중인 이메일입니다.");
+        assertThat(e.getMessage()).isEqualTo("이미 사용중인 이메일입니다.");
+    }
+
+    @Test
+    @DisplayName("유저 한명 조회")
+    public void findOne() throws Exception {
+        // given
+        User user = User.builder()
+                .email("abc@ac.com")
+                .password("abcdef")
+                .name("이름")
+                .job(Job.DEV)
+                .build();
+        Long userId = userRepository.save(user);
+
+        // when
+        User savedUser = userService.findOne(userId);
+
+        // then
+        assertThat(savedUser).isEqualTo(user);
     }
 }
