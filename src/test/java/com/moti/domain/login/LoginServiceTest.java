@@ -3,6 +3,8 @@ package com.moti.domain.login;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
+import com.moti.web.login.dto.LoginRequestDto;
+import com.moti.web.login.dto.LoginResponseDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,7 +25,12 @@ class LoginServiceTest {
 
     @BeforeEach
     void join() {
-        user = new User("aaa@gmail.com", "abcdef", "user1", Job.DEV);
+        user = User.builder()
+                .email("aaa@gmail.com")
+                .password("abcdef")
+                .name("user1")
+                .job(Job.DEV)
+                .build();
         userService.join(user);
     }
 

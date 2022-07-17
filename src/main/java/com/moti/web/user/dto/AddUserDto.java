@@ -1,15 +1,14 @@
 package com.moti.web.user.dto;
 
 import com.moti.domain.user.entity.Job;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.*;
 
 @Getter
 @ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class AddUserDto {
 
     @NotBlank
@@ -27,14 +26,14 @@ public class AddUserDto {
     @NotNull
     private Job job;
 
-    protected AddUserDto() {
-    }
+    private String introduce;
 
     @Builder
-    public AddUserDto(String email, String pw, String name, Job job) {
+    public AddUserDto(String email, String pw, String name, Job job, String introduce) {
         this.email = email;
         this.pw = pw;
         this.name = name;
         this.job = job;
+        this.introduce = introduce;
     }
 }

@@ -17,7 +17,12 @@ class UserRepositoryTest {
     @Test
     public void tdd() throws Exception {
         // given
-        User user = new User("wodud@afd.com", "abcdef", "wodud", Job.DEV);
+        User user = User.builder()
+                .email("wodud@afd.com")
+                .password("abcdef")
+                .name("wodud")
+                .job(Job.DEV)
+                .build();
 
         // when
         Long saveId = userRepository.save(user);

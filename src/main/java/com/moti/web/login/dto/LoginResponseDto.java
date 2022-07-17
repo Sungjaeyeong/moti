@@ -2,6 +2,7 @@ package com.moti.web.login.dto;
 
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,6 +14,7 @@ public class LoginResponseDto {
     private String name;
     private Job job;
 
+    @Builder
     public LoginResponseDto(User user) {
         this.id = user.getId();
         this.email = user.getEmail();

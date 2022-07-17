@@ -1,6 +1,7 @@
 package com.moti.domain.user.entity;
 
 import com.moti.domain.post.Post;
+import lombok.Builder;
 import lombok.Getter;
 
 import javax.persistence.*;
@@ -24,6 +25,9 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Job job;
 
+    @Lob
+    private String introduce;
+
     @OneToMany(mappedBy = "user")
     private List<UserTeam> userTeams = new ArrayList<>();
 
@@ -33,10 +37,15 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
 
-    public User(String email, String password, String name, Job job) {
+    @Builder
+    public User(String email, String password, String name, Job job, String introduce, List<UserTeam> userTeams, List<UserChat> userChats, List<Post> posts) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.job = job;
+        this.introduce = introduce;
+        this.userTeams = userTeams;
+        this.userChats = userChats;
+        this.posts = posts;
     }
 }

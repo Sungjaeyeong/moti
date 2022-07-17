@@ -23,14 +23,12 @@ class UserServiceTest {
     @DisplayName("회원가입 - 서비스")
     public void join() throws Exception {
         // given
-        AddUserDto addUserDto = AddUserDto.builder()
+        User user = User.builder()
                 .email("jaeyeong@moti.com")
-                .pw("abcdef")
+                .password("abcdef")
                 .name("재영")
                 .job(Job.DEV)
                 .build();
-
-        User user = new User(addUserDto.getEmail(), addUserDto.getPw(), addUserDto.getName(), addUserDto.getJob());
 
         // when
         Long joinUserId = userService.join(user);
@@ -43,15 +41,19 @@ class UserServiceTest {
     @DisplayName("중복 회원 예외")
     public void validate_user() throws Exception {
         // given
-        AddUserDto addUserDto = AddUserDto.builder()
+        User user1 = User.builder()
                 .email("jaeyeong@moti.com")
-                .pw("abcdef")
+                .password("abcdef")
                 .name("재영")
                 .job(Job.DEV)
                 .build();
 
-        User user1 = new User(addUserDto.getEmail(), addUserDto.getPw(), addUserDto.getName(), addUserDto.getJob());
-        User user2 = new User(addUserDto.getEmail(), addUserDto.getPw(), addUserDto.getName(), addUserDto.getJob());
+        User user2 = User.builder()
+                .email("jaeyeong@moti.com")
+                .password("abcdef")
+                .name("재영")
+                .job(Job.DEV)
+                .build();
 
         // when, then
         userService.join(user1);

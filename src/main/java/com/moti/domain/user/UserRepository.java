@@ -10,7 +10,6 @@ import java.util.List;
 
 @Repository
 @RequiredArgsConstructor
-@Transactional
 public class UserRepository {
 
     private final EntityManager em;

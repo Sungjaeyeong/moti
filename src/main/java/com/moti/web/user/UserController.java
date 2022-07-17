@@ -24,7 +24,14 @@ public class UserController {
     @PostMapping("/add")
     public AddUserResponseDto join(@RequestBody @Valid AddUserDto addUserDto) {
 
-        User user = new User(addUserDto.getEmail(), addUserDto.getPw(), addUserDto.getName(), addUserDto.getJob());
+        User user = User.builder()
+                .email(addUserDto.getEmail())
+                .password(addUserDto.getPw())
+                .name(addUserDto.getName())
+                .job(addUserDto.getJob())
+                .introduce(addUserDto.getIntroduce())
+                .build();
+
         Long userId = userService.join(user);
 
         return new AddUserResponseDto(userId);

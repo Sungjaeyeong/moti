@@ -19,6 +19,7 @@ public class Post {
 
     private String title;
 
+    @Lob
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

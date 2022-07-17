@@ -30,5 +30,10 @@ public class UserService {
         }
     }
 
+    // 유저 정보조회
+    public User findOne(Long userId) {
+        return userRepository.findOne(userId);
+    }
+
     // 유저 정보수정
 }

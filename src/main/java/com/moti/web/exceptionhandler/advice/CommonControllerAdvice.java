@@ -28,7 +28,11 @@ public class CommonControllerAdvice {
     public ErrorResult methodExHandle(MethodArgumentNotValidException e) {
         log.error("[exceptionHandle] exception", e);
 
-        ErrorResult errorResult = new ErrorResult("400", "잘못된 요청입니다.");
+        ErrorResult errorResult = ErrorResult.builder()
+                .code("400")
+                .message("잘못된 요청입니다.")
+                .build();
+
         for (FieldError fieldError : e.getFieldErrors()) {
             errorResult.addValidation(fieldError.getField(), getErrorMessage(fieldError));
         }
@@ -55,14 +59,20 @@ public class CommonControllerAdvice {
     public ErrorResult methodExHandle(NotMatchUserException e) {
         log.error("[exceptionHandle] exception", e);
 
-        return new ErrorResult("401", "유저가 존재하지 않습니다.");
+        return ErrorResult.builder()
+                .code("401")
+                .message("유저가 존재하지 않습니다.")
+                .build();
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResult exHandle(Exception e) {
         log.error("[exceptionHandle] exception", e);
-        return new ErrorResult("500", "서버 오류");
+        return ErrorResult.builder()
+                .code("500")
+                .message("서버 오류")
+                .build();
     }
 
 }

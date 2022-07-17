@@ -27,7 +27,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         if (session == null || session.getAttribute(SessionConst.LOGIN_USER) == null) {
             response.setCharacterEncoding("utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            ErrorResult errorResult = new ErrorResult("401", "인증 필요");
+            ErrorResult errorResult = ErrorResult.builder()
+                    .code("401")
+                    .message("인증 필요")
+                    .build();
             response.getWriter().write(objectMapper.writeValueAsString(errorResult));
             return false;
         }

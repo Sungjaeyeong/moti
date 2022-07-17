@@ -35,7 +35,13 @@ class LoginControllerTest {
 
     @BeforeEach
     void join() {
-        user = new User("aaa@gmail.com", "abcdef", "user1", Job.DEV);
+        user = User.builder()
+                .email("aaa@gmail.com")
+                .password("abcdef")
+                .name("user1")
+                .job(Job.DEV)
+                .build();
+
         userService.join(user);
     }
 
