@@ -1,6 +1,7 @@
 package com.moti.domain.user;
 
 import com.moti.domain.user.entity.User;
+import com.moti.web.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +35,7 @@ public class UserService {
     public User findOne(Long userId) {
         User findUser = userRepository.findOne(userId);
         if (findUser == null) {
-            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
+            throw new NotFoundUserException();
         }
         return findUser;
     }

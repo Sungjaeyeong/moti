@@ -2,6 +2,7 @@ package com.moti.domain.user;
 
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
+import com.moti.web.exception.NotFoundUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,5 +79,22 @@ class UserServiceTest {
 
         // then
         assertThat(savedUser).isEqualTo(user);
+    }
+
+    @Test
+    @DisplayName("없는 유저 조회")
+    public void notExistsUser() throws Exception {
+        // given
+        User user = User.builder()
+                .email("abc@ac.com")
+                .password("abcdef")
+                .name("이름")
+                .job(Job.DEV)
+                .build();
+        Long userId = userRepository.save(user);
+
+        // when, then
+        assertThrows(NotFoundUserException.class, () -> userService.findOne(userId + 1L));
+
     }
 }

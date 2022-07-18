@@ -113,7 +113,7 @@ class LoginControllerTest {
                 )
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.code").value("401"))
-                .andExpect(jsonPath("$.message").value("유저가 존재하지 않습니다."))
+                .andExpect(jsonPath("$.message").value("아이디 또는 비밀번호가 잘못되었습니다."))
                 .andDo(print());
 
     }
