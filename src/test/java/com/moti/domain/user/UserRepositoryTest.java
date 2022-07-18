@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @SpringBootTest
 @Transactional
 class UserRepositoryTest {
@@ -27,9 +29,13 @@ class UserRepositoryTest {
         // when
         Long saveId = userRepository.save(user);
         User findUser = userRepository.findOne(saveId);
+        Optional<User> byEmailUser = userRepository.findByEmail("aaa@bbb.com");
+        User nullUser = userRepository.findOne(2L);
 
         // then
         Assertions.assertThat(findUser.getId()).isEqualTo(user.getId());
+        Assertions.assertThat(byEmailUser).isEqualTo(Optional.empty());
+        Assertions.assertThat(nullUser).isEqualTo(null);
     }
 
 }

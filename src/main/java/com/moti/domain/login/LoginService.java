@@ -5,7 +5,7 @@ import com.moti.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -14,14 +14,13 @@ public class LoginService {
     private final UserRepository userRepository;
 
     public User login(String email, String password) {
-        List<User> userList = userRepository.findByEmail(email);
-        if (userList.size() == 0) {
-            return null;
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (!userOptional.isEmpty()) {
+            User user = userOptional.get();
+            if (user.getPassword().equals(password)) {
+                return user;
+            }
         }
-        if (userList.get(0).getPassword().equals(password)) {
-            return userList.get(0);
-        } else {
-            return null;
-        }
+        return null;
     }
 }
