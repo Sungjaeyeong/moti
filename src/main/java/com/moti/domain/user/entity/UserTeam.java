@@ -1,14 +1,14 @@
 package com.moti.domain.user.entity;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.team.Team;
-import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class UserTeam {
+public class UserTeam extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_team_id")

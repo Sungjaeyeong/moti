@@ -1,5 +1,6 @@
 package com.moti.domain.user.entity;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.post.Post;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class User {
+public class User extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_id")

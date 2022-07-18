@@ -1,5 +1,6 @@
 package com.moti.domain.team;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.user.entity.UserTeam;
 import lombok.Getter;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Team {
+public class Team extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "team_id")

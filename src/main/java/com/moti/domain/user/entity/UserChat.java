@@ -1,14 +1,14 @@
 package com.moti.domain.user.entity;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.chat.Chat;
-import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class UserChat {
+public class UserChat extends BaseEntity {
     @Id @GeneratedValue
     @Column(name = "user_chat_id")
     private Long id;

@@ -1,5 +1,6 @@
 package com.moti.domain.file;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.post.Post;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class File {
+public class File extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "file_id")

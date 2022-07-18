@@ -1,5 +1,6 @@
 package com.moti.domain.chat;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.message.Message;
 import com.moti.domain.user.entity.UserChat;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Chat {
+public class Chat extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "chat_id")

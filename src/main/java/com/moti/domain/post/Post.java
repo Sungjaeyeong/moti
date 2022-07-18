@@ -1,5 +1,6 @@
 package com.moti.domain.post;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.user.entity.User;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.file.File;
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
-public class Post {
+public class Post extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "post_id")

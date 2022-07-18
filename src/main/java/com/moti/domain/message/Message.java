@@ -1,5 +1,6 @@
 package com.moti.domain.message;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.chat.Chat;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Message {
+public class Message extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "message_id")

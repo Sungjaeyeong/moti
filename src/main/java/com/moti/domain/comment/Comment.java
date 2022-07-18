@@ -1,5 +1,6 @@
 package com.moti.domain.comment;
 
+import com.moti.domain.BaseEntity;
 import com.moti.domain.post.Post;
 import lombok.Getter;
 
@@ -7,7 +8,7 @@ import javax.persistence.*;
 
 @Entity
 @Getter
-public class Comment {
+public class Comment extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "comment_id")
