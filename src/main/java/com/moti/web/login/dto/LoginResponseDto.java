@@ -13,6 +13,7 @@ public class LoginResponseDto {
     private String email;
     private String name;
     private Job job;
+    private String introduce;
 
     @Builder
     public LoginResponseDto(User user) {
@@ -20,6 +21,7 @@ public class LoginResponseDto {
         this.email = user.getEmail();
         this.name = user.getName();
         this.job = user.getJob();
+        this.introduce = user.getIntroduce();
     }
 }
 

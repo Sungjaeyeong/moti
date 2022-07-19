@@ -9,10 +9,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -55,6 +57,17 @@ public class CommonControllerAdvice {
                 .orElse(fieldError.getDefaultMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    public ErrorResult typeExHandle(MethodArgumentTypeMismatchException e) {
+        log.error("[exceptionHandle] exception", e);
+
+        return ErrorResult.builder()
+                .code("404")
+                .message("타입을 확인해주세요.")
+                .build();
+    }
+
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler
     public ErrorResult methodExHandle(NotMatchUserException e) {
@@ -74,6 +87,17 @@ public class CommonControllerAdvice {
         return ErrorResult.builder()
                 .code("404")
                 .message("존재하지 않는 유저입니다.")
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler
+    public ErrorResult notFoundExHandle(HttpRequestMethodNotSupportedException e) {
+        log.error("[exceptionHandle] exception", e);
+
+        return ErrorResult.builder()
+                .code("404")
+                .message("Not found.")
                 .build();
     }
 

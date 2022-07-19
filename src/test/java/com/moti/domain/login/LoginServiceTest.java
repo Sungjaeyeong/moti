@@ -3,8 +3,6 @@ package com.moti.domain.login;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
-import com.moti.web.login.dto.LoginRequestDto;
-import com.moti.web.login.dto.LoginResponseDto;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

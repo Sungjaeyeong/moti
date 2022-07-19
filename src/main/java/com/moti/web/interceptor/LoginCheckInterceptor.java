@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moti.web.SessionConst;
 import com.moti.web.exceptionhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +24,7 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute(SessionConst.LOGIN_USER) == null) {
+            response.setContentType("application/json");
             response.setCharacterEncoding("utf-8");
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             ErrorResult errorResult = ErrorResult.builder()
