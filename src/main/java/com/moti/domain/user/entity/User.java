@@ -42,17 +42,15 @@ public class User extends BaseEntity {
     private List<Post> posts = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, Job job, String introduce, List<UserTeam> userTeams, List<UserChat> userChats, List<Post> posts) {
+    public User(String email, String password, String name, Job job, String introduce) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.job = job;
         this.introduce = introduce;
-        this.userTeams = userTeams;
-        this.userChats = userChats;
-        this.posts = posts;
     }
 
+    // 유저정보 변경
     public void changeInfo(String name, String introduce) {
         this.name = name;
         this.introduce = introduce;

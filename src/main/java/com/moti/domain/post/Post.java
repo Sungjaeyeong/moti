@@ -4,7 +4,10 @@ import com.moti.domain.BaseEntity;
 import com.moti.domain.user.entity.User;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.file.File;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Post extends BaseEntity {
 
     @Id @GeneratedValue
@@ -37,5 +41,12 @@ public class Post extends BaseEntity {
     public void setUser(User user) {
         this.user = user;
         user.getPosts().add(this);
+    }
+
+    @Builder
+    public Post(String title, String content, User user) {
+        this.title = title;
+        this.content = content;
+        this.setUser(user);
     }
 }
