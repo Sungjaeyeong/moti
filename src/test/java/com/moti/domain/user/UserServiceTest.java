@@ -1,5 +1,6 @@
 package com.moti.domain.user;
 
+import com.moti.domain.user.dto.EditUserDto;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
 import com.moti.web.exception.NotFoundUserException;
@@ -97,4 +98,31 @@ class UserServiceTest {
         assertThrows(NotFoundUserException.class, () -> userService.findOne(userId + 1L));
 
     }
+
+    @Test
+    @DisplayName("유저 정보 수정")
+    public void editUser() throws Exception {
+        // given
+        User user = User.builder()
+                .email("abc@ac.com")
+                .password("abcdef")
+                .name("이름")
+                .job(Job.DEV)
+                .build();
+        Long userId = userRepository.save(user);
+
+        EditUserDto editUserDto = EditUserDto.builder()
+                .name("변경후이름")
+                .introduce("변경후소개")
+                .build();
+
+        // when
+        userService.edit(userId, editUserDto);
+
+        // then
+        User findUser = userRepository.findOne(userId);
+        assertThat(findUser.getName()).isEqualTo(editUserDto.getName());
+        assertThat(findUser.getIntroduce()).isEqualTo(editUserDto.getIntroduce());
+    }
+
 }

@@ -1,5 +1,6 @@
 package com.moti.domain.user;
 
+import com.moti.domain.user.dto.EditUserDto;
 import com.moti.domain.user.entity.User;
 import com.moti.web.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
@@ -40,13 +41,14 @@ public class UserService {
         return findUser;
     }
 
-
     // 유저 정보수정
-//    public void edit(Long userId, EditUserDto editUserDto) {
-//        User findUser = userRepository.findOne(userId);
-//        if (findUser == null) {
-//            throw new IllegalArgumentException("존재하지 않는 유저입니다.");
-//        }
-//    }
+    @Transactional
+    public void edit(Long userId, EditUserDto editUserDto) {
+        User findUser = userRepository.findOne(userId);
+        if (findUser == null) {
+            throw new NotFoundUserException();
+        }
+        findUser.changeInfo(editUserDto.getName(), editUserDto.getIntroduce());
+    }
 
 }

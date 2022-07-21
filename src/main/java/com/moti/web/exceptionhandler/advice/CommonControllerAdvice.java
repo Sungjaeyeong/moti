@@ -1,6 +1,7 @@
 package com.moti.web.exceptionhandler.advice;
 
 import com.moti.web.exception.NotFoundUserException;
+import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.exception.NotMatchUserException;
 import com.moti.web.exceptionhandler.ErrorResult;
 import lombok.RequiredArgsConstructor;
@@ -70,7 +71,7 @@ public class CommonControllerAdvice {
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler
-    public ErrorResult methodExHandle(NotMatchUserException e) {
+    public ErrorResult notMatchUserExHandle(NotMatchUserException e) {
         log.error("[exceptionHandle] exception", e);
 
         return ErrorResult.builder()
@@ -87,6 +88,17 @@ public class CommonControllerAdvice {
         return ErrorResult.builder()
                 .code("404")
                 .message("존재하지 않는 유저입니다.")
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    public ErrorResult notMatchLoginUserSessionExHandle(NotMatchLoginUserSessionException e) {
+        log.error("[exceptionHandle] exception", e);
+
+        return ErrorResult.builder()
+                .code("403")
+                .message("권한이 없습니다.")
                 .build();
     }
 

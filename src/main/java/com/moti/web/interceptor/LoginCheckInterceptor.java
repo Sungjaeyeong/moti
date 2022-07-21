@@ -9,6 +9,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Objects;
 
 @Slf4j
 public class LoginCheckInterceptor implements HandlerInterceptor {
@@ -19,6 +20,10 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
 
         String requestURI = request.getRequestURI();
+
+        if (Objects.equals(request.getMethod(), "GET")) {
+            return true;
+        }
         log.info("로그인 체크 인터셉터 - requestURI: {}", requestURI);
 
         HttpSession session = request.getSession(false);

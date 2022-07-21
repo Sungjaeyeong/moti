@@ -127,7 +127,6 @@ class LoginControllerTest {
         MockHttpSession session = new MockHttpSession();
         session.setAttribute(SessionConst.LOGIN_USER, userId);
 
-        System.out.println("session = " + session.getAttribute(SessionConst.LOGIN_USER));
         // when, then
         mockMvc.perform(post("/logout")
                         .session(session)
