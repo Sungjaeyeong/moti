@@ -4,6 +4,7 @@ import com.moti.web.exception.NotFoundUserException;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.exception.NotMatchUserException;
 import com.moti.web.exceptionhandler.ErrorResult;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.MessageSource;
@@ -103,8 +104,8 @@ public class CommonControllerAdvice {
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler
-    public ErrorResult notFoundExHandle(HttpRequestMethodNotSupportedException e) {
+    @ExceptionHandler({HttpRequestMethodNotSupportedException.class, NotFoundException.class})
+    public ErrorResult notFoundExHandle(Exception e) {
         log.error("[exceptionHandle] exception", e);
 
         return ErrorResult.builder()

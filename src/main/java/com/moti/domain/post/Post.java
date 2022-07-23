@@ -1,6 +1,7 @@
 package com.moti.domain.post;
 
 import com.moti.domain.BaseEntity;
+import com.moti.domain.post.dto.EditPostDto;
 import com.moti.domain.user.entity.User;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.file.File;
@@ -43,10 +44,28 @@ public class Post extends BaseEntity {
         user.getPosts().add(this);
     }
 
+    public void setFiles(List<File> files) {
+        this.files = files;
+        for (File file : files) {
+            file.setPost(this);
+        }
+    }
+
     @Builder
     public Post(String title, String content, User user) {
         this.title = title;
         this.content = content;
-        this.setUser(user);
+        setUser(user);
     }
+
+    // 포스트 수정
+    public void changePost(EditPostDto editPostDto) {
+        this.title = editPostDto.getTitle();
+        this.content = editPostDto.getContent();
+        List<File> editPostDtoFileList = editPostDto.getFileList();
+        if (editPostDtoFileList != null) {
+            setFiles(editPostDto.getFileList());
+        }
+    }
+
 }
