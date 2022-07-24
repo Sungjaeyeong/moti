@@ -52,10 +52,13 @@ public class Post extends BaseEntity {
     }
 
     @Builder
-    public Post(String title, String content, User user) {
+    public Post(String title, String content, User user, List<File> files) {
         this.title = title;
         this.content = content;
         setUser(user);
+        if (files != null) {
+            setFiles(files);
+        }
     }
 
     // 포스트 수정

@@ -46,7 +46,7 @@ public class UserRepository {
         }
     }
 
-    public long count() {
+    public Long count() {
         return em.createQuery("select count(u) from User u", Long.class)
                 .getSingleResult();
     }

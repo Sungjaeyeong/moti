@@ -30,5 +30,10 @@ public class PostRepository {
         em.remove(post);
     }
 
+    public Long count() {
+        return em.createQuery("select count(p) from Post p", Long.class)
+                .getSingleResult();
+    }
+
     // 특정 유저의 포스트 찾기
 }
