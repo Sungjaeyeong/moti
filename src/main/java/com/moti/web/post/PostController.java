@@ -66,28 +66,20 @@ public class PostController {
     public PostResponseDto findOne(@PathVariable Long postId) {
         Post findPost = postService.findOne(postId);
 
-        return PostResponseDto.builder()
-                .id(findPost.getId())
-                .title(findPost.getTitle())
-                .content(findPost.getContent())
-                .userId(findPost.getUser().getId())
-                .files(findPost.getFiles())
-                .build();
+        return new PostResponseDto(findPost);
     }
 
     // 모든 포스트 조회
     @GetMapping()
-    public List<PostResponseDto> findAll() {
+    public List<PostResponseDto> findAll(@RequestParam(value = "search", required = false) String searchWord) {
         List<Post> PostList = postService.findAll();
 
+        if (searchWord != null) {
+            PostList = postService.findSearch(searchWord);
+        }
+
         return PostList.stream()
-                .map((post -> PostResponseDto.builder()
-                    .id(post.getId())
-                    .title(post.getTitle())
-                    .content(post.getContent())
-                    .userId(post.getUser().getId())
-                    .files(post.getFiles())
-                    .build())
+                .map((post -> new PostResponseDto(post))
                 )
                 .collect(Collectors.toList());
     }
@@ -127,4 +119,5 @@ public class PostController {
             throw new NotMatchLoginUserSessionException();
         }
     }
+
 }

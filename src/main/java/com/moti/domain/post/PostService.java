@@ -51,4 +51,7 @@ public class PostService {
         postRepository.delete(findPost);
     }
 
+    public List<Post> findSearch(String searchWord) {
+        return postRepository.findSearch(searchWord);
+    }
 }

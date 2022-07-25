@@ -35,5 +35,14 @@ public class PostRepository {
                 .getSingleResult();
     }
 
+    // 검색
+    public List<Post> findSearch(String searchWord) {
+        return em.createQuery("select p from Post p " +
+                        "where p.title like :searchWord " +
+                        "OR p.content like :searchWord", Post.class)
+                .setParameter("searchWord", "%" + searchWord + "%")
+                .getResultList();
+    }
+
     // 특정 유저의 포스트 찾기
 }

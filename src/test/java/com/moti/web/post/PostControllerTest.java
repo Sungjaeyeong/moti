@@ -163,6 +163,31 @@ class PostControllerTest {
             PostResponseDto[] readValue = objectMapper.readValue(contentAsString, PostResponseDto[].class);
             assertThat(readValue.length).isEqualTo(2);
         }
+
+        @Test
+        @DisplayName("포스트 검색")
+        public void findSearch() throws Exception {
+            // given
+            Post post2 = Post.builder()
+                    .title("제목2")
+                    .content("안녕하세요")
+                    .user(user)
+                    .build();
+
+            postId = postRepository.save(post2);
+
+            // when
+            MvcResult mvcResult = mockMvc.perform(get("/posts")
+                            .param("search", "내용")
+                    )
+                    .andExpect(status().isOk())
+                    .andDo(print())
+                    .andReturn();
+
+            String contentAsString = mvcResult.getResponse().getContentAsString();
+            PostResponseDto[] readValue = objectMapper.readValue(contentAsString, PostResponseDto[].class);
+            assertThat(readValue.length).isEqualTo(1);
+        }
     }
 
     @Nested

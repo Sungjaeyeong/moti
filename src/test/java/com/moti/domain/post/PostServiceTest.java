@@ -120,4 +120,14 @@ class PostServiceTest {
         // when, then
         assertThrows(NotFoundException.class, () -> postService.delete(postId+1L));
     }
+
+    @Test
+    @DisplayName("포스트 검색")
+    public void search() throws Exception {
+        // when
+        List<Post> posts = postService.findSearch("안녕하세요");
+
+        // then
+        assertThat(posts.size()).isEqualTo(0);
+    }
 }

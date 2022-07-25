@@ -41,24 +41,31 @@ class PostRepositoryTest {
                 .build();
 
         em.persist(user);
+        em.persist(post);
     }
 
     @Test
     @DisplayName("포스트 저장")
     void save() throws Exception {
+        // given
+        Post post2 = Post.builder()
+                .title("제목2")
+                .content("내용2")
+                .user(user)
+                .build();
+
+        em.persist(post2);
+
         // when
-        Long postId = postRepository.save(post);
+        Long postId = postRepository.save(post2);
 
         // then
-        assertThat(postId).isEqualTo(post.getId());
+        assertThat(postId).isEqualTo(post2.getId());
     }
 
     @Test
     @DisplayName("포스트 조회")
     void findOne() throws Exception {
-        // given
-        em.persist(post);
-
         // when
         Post findPost = postRepository.findOne(post.getId());
 
@@ -76,7 +83,6 @@ class PostRepositoryTest {
                 .user(user)
                 .build();
 
-        em.persist(post);
         em.persist(post2);
 
         // when
@@ -89,15 +95,38 @@ class PostRepositoryTest {
     @Test
     @DisplayName("포스트 삭제")
     void delete() throws Exception {
-        // given
-        em.persist(post);
-
         // when
         postRepository.delete(post);
         Post findPost = postRepository.findOne(post.getId());
 
         // then
         assertThat(findPost).isNotEqualTo(post);
+    }
+
+    @Test
+    @DisplayName("포스트 검색")
+    void search() throws Exception {
+        // given
+        Post post2 = Post.builder()
+                .title("제목2")
+                .content("2내용2")
+                .user(user)
+                .build();
+
+        em.persist(post2);
+
+        Post post3 = Post.builder()
+                .title("제목입니다")
+                .content("안녕하세요")
+                .user(user)
+                .build();
+
+        em.persist(post3);
+        // when
+        List<Post> posts = postRepository.findSearch("내용");
+
+        // then
+        assertThat(posts.size()).isEqualTo(2);
     }
 
 }
