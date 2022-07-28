@@ -30,7 +30,7 @@ public class LoginController {
 
         log.info("loginRequestDto: {}", loginRequestDto);
 
-        User loginUser = loginService.login(loginRequestDto.getEmail(), loginRequestDto.getPw());
+        User loginUser = loginService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
 
         if (loginUser == null) {
             throw new NotMatchUserException();

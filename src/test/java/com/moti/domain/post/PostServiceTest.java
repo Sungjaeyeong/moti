@@ -1,6 +1,6 @@
 package com.moti.domain.post;
 
-import com.moti.domain.post.dto.EditPostDto;
+import com.moti.domain.post.dto.EditPostServiceDto;
 import com.moti.domain.user.UserRepository;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
@@ -89,13 +89,13 @@ class PostServiceTest {
     @DisplayName("포스트 수정")
     public void edit() throws Exception {
         // given
-        EditPostDto editPostDto = EditPostDto.builder()
+        EditPostServiceDto editPostServiceDto = EditPostServiceDto.builder()
                 .title("변경 제목")
                 .content("변경 내용")
                 .build();
 
         // when
-        postService.edit(postId, editPostDto);
+        postService.edit(postId, editPostServiceDto);
 
         // then
         Post findPost = postRepository.findOne(postId);

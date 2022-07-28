@@ -1,10 +1,10 @@
 package com.moti.domain.post;
 
 import com.moti.domain.BaseEntity;
-import com.moti.domain.post.dto.EditPostDto;
-import com.moti.domain.user.entity.User;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.file.File;
+import com.moti.domain.post.dto.EditPostServiceDto;
+import com.moti.domain.user.entity.User;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class Post extends BaseEntity {
     @OneToMany(mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<File> files = new ArrayList<>();
 
     // 연관관계 메서드
@@ -62,12 +62,17 @@ public class Post extends BaseEntity {
     }
 
     // 포스트 수정
-    public void changePost(EditPostDto editPostDto) {
-        this.title = editPostDto.getTitle();
-        this.content = editPostDto.getContent();
-        List<File> editPostDtoFileList = editPostDto.getFileList();
-        if (editPostDtoFileList != null) {
-            setFiles(editPostDto.getFileList());
+    public void changePost(EditPostServiceDto editPostServiceDto) {
+        this.getFiles().clear();
+
+        this.title = editPostServiceDto.getTitle();
+        this.content = editPostServiceDto.getContent();
+        List<File> files = editPostServiceDto.getFileList();
+        if (files != null) {
+            this.getFiles().addAll(files);
+            for (File file : files) {
+                file.setPost(this);
+            }
         }
     }
 

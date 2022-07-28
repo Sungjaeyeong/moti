@@ -3,12 +3,13 @@ package com.moti.web.post;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moti.domain.post.Post;
 import com.moti.domain.post.PostRepository;
-import com.moti.domain.post.dto.EditPostDto;
 import com.moti.domain.user.UserRepository;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
 import com.moti.web.SessionConst;
 import com.moti.web.post.dto.CreatePostDto;
+import com.moti.web.post.dto.CreatePostResponseDto;
+import com.moti.web.post.dto.EditPostControllerDto;
 import com.moti.web.post.dto.PostResponseDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -18,10 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -38,6 +46,7 @@ class PostControllerTest {
     @Autowired MockMvc mockMvc;
     @Autowired UserRepository userRepository;
     @Autowired PostRepository postRepository;
+    @Autowired EntityManager em;
 
     User user;
     Long userId;
@@ -64,24 +73,33 @@ class PostControllerTest {
         @DisplayName("포스트 작성 성공")
         public void write_success() throws Exception {
             // given
+            MockMultipartFile image1 = new MockMultipartFile("multipartFiles", "imagefile1.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+            MockMultipartFile image2 = new MockMultipartFile("multipartFiles", "imagefile2.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+
             CreatePostDto createPostDto = CreatePostDto.builder()
                     .title("제목")
                     .content("내용")
                     .userId(userId)
                     .build();
 
-            String json = objectMapper.writeValueAsString(createPostDto);
-
             // when
-            mockMvc.perform(post("/posts")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json)
+            mockMvc.perform(multipart("/posts")
+                            .file(image1)
+                            .file(image2)
+                            .param("title", createPostDto.getTitle())
+                            .param("content", createPostDto.getContent())
+                            .param("userId", String.valueOf(createPostDto.getUserId()))
                             .session(session)
                     )
                     .andExpect(status().isOk())
                     .andDo(print());
 
+            // then
+            Long fileCount = em.createQuery("select count(f) from File f", Long.class)
+                    .getSingleResult();
+
             assertThat(1L).isEqualTo(postRepository.count());
+            assertThat(2L).isEqualTo(fileCount);
 
         }
 
@@ -95,15 +113,15 @@ class PostControllerTest {
                     .userId(userId)
                     .build();
 
-            String json = objectMapper.writeValueAsString(createPostDto);
-
             MockHttpSession wrongSession = new MockHttpSession();
             wrongSession.setAttribute(SessionConst.LOGIN_USER, userId+1L);
 
             // when
             mockMvc.perform(post("/posts")
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .param("title", createPostDto.getTitle())
+                            .param("content", createPostDto.getContent())
+                            .param("userId", String.valueOf(createPostDto.getUserId()))
                             .session(wrongSession)
                     )
                     .andExpect(status().isForbidden())
@@ -211,46 +229,81 @@ class PostControllerTest {
         @DisplayName("포스트 수정 성공")
         public void edit_success() throws Exception {
             // given
-            EditPostDto editPostDto = EditPostDto.builder()
+            MockMultipartFile oldImage1 = new MockMultipartFile("multipartFiles", "oldimagefile1.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+            MockMultipartFile oldImage2 = new MockMultipartFile("multipartFiles", "oldimagefile2.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+
+            CreatePostDto createPostDto = CreatePostDto.builder()
+                    .title("제목")
+                    .content("내용")
+                    .userId(userId)
+                    .build();
+
+            MvcResult mvcResult = mockMvc.perform(multipart("/posts")
+                    .file(oldImage1)
+                    .file(oldImage2)
+                    .param("title", createPostDto.getTitle())
+                    .param("content", createPostDto.getContent())
+                    .param("userId", String.valueOf(createPostDto.getUserId()))
+                    .session(session)
+            ).andReturn();
+
+            String contentAsString = mvcResult.getResponse().getContentAsString();
+            CreatePostResponseDto readValue = objectMapper.readValue(contentAsString, CreatePostResponseDto.class);
+            Long createdPostId = readValue.getId();
+
+            MockMultipartFile image1 = new MockMultipartFile("multipartFiles", "imagefile1.jpeg", "image/jpeg", "<<jpeg data>>".getBytes());
+
+            EditPostControllerDto editPostControllerDto = EditPostControllerDto.builder()
                     .title("변경 제목")
                     .content("변경 내용")
                     .build();
 
-            String json = objectMapper.writeValueAsString(editPostDto);
+            MockMultipartHttpServletRequestBuilder builder =
+                    MockMvcRequestBuilders.multipart("/posts/{postId}", createdPostId);
+            builder.with(new RequestPostProcessor() {
+                @Override
+                public MockHttpServletRequest postProcessRequest(MockHttpServletRequest request) {
+                    request.setMethod("PATCH");
+                    return request;
+                }
+            });
 
             // when
-            mockMvc.perform(patch("/posts/{postId}", postId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json)
+            mockMvc.perform(builder
+                            .file(image1)
+                            .param("title", editPostControllerDto.getTitle())
+                            .param("content", editPostControllerDto.getContent())
                             .session(session)
                     )
                     .andExpect(status().isOk())
                     .andDo(print());
 
             // then
-            Post findPost = postRepository.findOne(postId);
-            assertThat(findPost).isEqualTo(post);
-            System.out.println("findPost = " + findPost.getTitle());
+            Post findPost = postRepository.findOne(createdPostId);
+            Long fileCount = em.createQuery("select count(f) from File f", Long.class)
+                    .getSingleResult();
+
+            assertThat(findPost.getTitle()).isEqualTo("변경 제목");
+            assertThat(fileCount).isEqualTo(1L);
         }
 
         @Test
         @DisplayName("포스트 수정 실패 - 유저아이디 다름")
         public void edit_fail() throws Exception {
             // given
-            EditPostDto editPostDto = EditPostDto.builder()
+            EditPostControllerDto editPostControllerDto = EditPostControllerDto.builder()
                     .title("변경 제목")
                     .content("변경 내용")
                     .build();
-
-            String json = objectMapper.writeValueAsString(editPostDto);
 
             MockHttpSession invalidSession = new MockHttpSession();
             invalidSession.setAttribute(SessionConst.LOGIN_USER, userId+1L);
 
             // when
             mockMvc.perform(patch("/posts/{postId}", postId)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .content(json)
+                            .contentType(MediaType.MULTIPART_FORM_DATA_VALUE)
+                            .param("title", editPostControllerDto.getTitle())
+                            .param("content", editPostControllerDto.getContent())
                             .session(invalidSession)
                     )
                     .andExpect(status().isForbidden())

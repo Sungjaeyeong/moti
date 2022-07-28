@@ -19,3 +19,5 @@ spring:
 logging:
   level:
     org.hibernate.SQL: debug
+
+file.dir: /Users/jaeyeong/Desktop/attachfiles/

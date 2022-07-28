@@ -5,3 +5,5 @@ logging:
 spring:
   messages:
     basename: messages, errors
+
+file.dir: /Users/jaeyeong/Desktop/attachfiles/

@@ -1,6 +1,6 @@
 package com.moti.domain.post;
 
-import com.moti.domain.post.dto.EditPostDto;
+import com.moti.domain.post.dto.EditPostServiceDto;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,12 +33,12 @@ public class PostService {
 
     // 포스트 수정
     @Transactional
-    public void edit(Long postId, EditPostDto editPostDto) throws NotFoundException {
+    public void edit(Long postId, EditPostServiceDto editPostServiceDto) throws NotFoundException {
         Post findPost = postRepository.findOne(postId);
         if (findPost == null) {
             throw new NotFoundException("Not found");
         }
-        findPost.changePost(editPostDto);
+        findPost.changePost(editPostServiceDto);
     }
 
     // 포스트 삭제
@@ -51,6 +51,7 @@ public class PostService {
         postRepository.delete(findPost);
     }
 
+    // 포스트 검색
     public List<Post> findSearch(String searchWord) {
         return postRepository.findSearch(searchWord);
     }

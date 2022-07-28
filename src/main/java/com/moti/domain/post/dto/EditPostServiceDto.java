@@ -11,8 +11,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class EditPostDto {
-
+public class EditPostServiceDto {
     @NotBlank
     private String title;
 
@@ -22,7 +21,7 @@ public class EditPostDto {
     private List<File> fileList;
 
     @Builder
-    public EditPostDto(String title, String content, List<File> fileList) {
+    public EditPostServiceDto(String title, String content, List<File> fileList) {
         this.title = title;
         this.content = content;
         this.fileList = fileList;

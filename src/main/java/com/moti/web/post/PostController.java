@@ -1,14 +1,17 @@
 package com.moti.web.post;
 
+import com.moti.domain.file.File;
+import com.moti.domain.file.FileService;
 import com.moti.domain.post.Post;
 import com.moti.domain.post.PostService;
-import com.moti.domain.post.dto.EditPostDto;
+import com.moti.domain.post.dto.EditPostServiceDto;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.User;
 import com.moti.web.SessionConst;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.post.dto.CreatePostDto;
 import com.moti.web.post.dto.CreatePostResponseDto;
+import com.moti.web.post.dto.EditPostControllerDto;
 import com.moti.web.post.dto.PostResponseDto;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +33,11 @@ public class PostController {
 
     private final PostService postService;
     private final UserService userService;
+    private final FileService fileService;
 
     // 포스트 작성
     @PostMapping()
-    public CreatePostResponseDto write(@RequestBody @Validated CreatePostDto createPostDto, HttpServletRequest request) {
+    public CreatePostResponseDto write(@ModelAttribute @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
 
         HttpSession session = request.getSession(false);
         Long userId = createPostDto.getUserId();
@@ -40,11 +45,13 @@ public class PostController {
 
         validateUserSession(session, userId);
 
+        List<File> storeFiles = fileService.storeFiles(createPostDto.getMultipartFiles());
+
         Post post = Post.builder()
                 .title(createPostDto.getTitle())
                 .content(createPostDto.getContent())
                 .user(findUser)
-                .files(createPostDto.getFiles())
+                .files(storeFiles)
                 .build();
 
         Long postId = postService.write(post);
@@ -86,26 +93,29 @@ public class PostController {
 
     // 포스트 수정
     @PatchMapping("/{postId}")
-    public void edit(@PathVariable Long postId, @RequestBody @Validated EditPostDto editPostDto, HttpServletRequest request) {
+    public void edit(@PathVariable Long postId, @ModelAttribute @Validated EditPostControllerDto editPostControllerDto, HttpServletRequest request) throws IOException, NotFoundException {
         HttpSession session = request.getSession(false);
         validateOwnerOfPost(session, postId);
-        try {
-            postService.edit(postId, editPostDto);
-        } catch (NotFoundException e) {
 
-        }
+        List<File> storeFiles = fileService.storeFiles(editPostControllerDto.getMultipartFiles());
+
+        EditPostServiceDto editPostServiceDto = EditPostServiceDto.builder()
+                .title(editPostControllerDto.getTitle())
+                .content(editPostControllerDto.getContent())
+                .fileList(storeFiles)
+                .build();
+
+        postService.edit(postId, editPostServiceDto);
+
     }
 
     // 포스트 삭제
     @DeleteMapping("/{postId}")
-    public void delete(@PathVariable Long postId, HttpServletRequest request) {
+    public void delete(@PathVariable Long postId, HttpServletRequest request) throws NotFoundException {
         HttpSession session = request.getSession(false);
         validateOwnerOfPost(session, postId);
-        try {
-            postService.delete(postId);
-        } catch (NotFoundException e) {
 
-        }
+        postService.delete(postId);
     }
 
     public void validateOwnerOfPost(HttpSession session, Long postId) {
