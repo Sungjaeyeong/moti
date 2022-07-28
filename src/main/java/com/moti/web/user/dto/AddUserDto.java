@@ -17,7 +17,7 @@ public class AddUserDto {
 
     @NotBlank
     @Length(min = 5, max = 20)
-    private String pw;
+    private String password;
 
     @NotBlank
     @Length(max = 10)
@@ -29,9 +29,9 @@ public class AddUserDto {
     private String introduce;
 
     @Builder
-    public AddUserDto(String email, String pw, String name, Job job, String introduce) {
+    public AddUserDto(String email, String password, String name, Job job, String introduce) {
         this.email = email;
-        this.pw = pw;
+        this.password = password;
         this.name = name;
         this.job = job;
         this.introduce = introduce;

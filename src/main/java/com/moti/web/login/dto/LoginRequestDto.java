@@ -16,11 +16,11 @@ public class LoginRequestDto {
 
     @NotBlank
     @Length(min = 5, max = 20)
-    private String pw;
+    private String password;
 
     @Builder
-    public LoginRequestDto(String email, String pw) {
+    public LoginRequestDto(String email, String password) {
         this.email = email;
-        this.pw = pw;
+        this.password = password;
     }
 }

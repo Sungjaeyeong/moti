@@ -41,7 +41,7 @@ class UserControllerTest {
         // given
         AddUserDto request = AddUserDto.builder()
                 .email("jaeyeong@moti.com")
-                .pw("abcdef")
+                .password("abcdef")
                 .name("재영")
                 .job(Job.DEV)
                 .build();
@@ -65,7 +65,7 @@ class UserControllerTest {
         // given
         AddUserDto request = AddUserDto.builder()
                 .email("")
-                .pw("abcdef")
+                .password("abcdef")
                 .name("재영")
                 .job(Job.DEV)
                 .build();

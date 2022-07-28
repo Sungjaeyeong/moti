@@ -51,7 +51,7 @@ class LoginControllerTest {
         // given
         LoginRequestDto request = LoginRequestDto.builder()
                 .email(user.getEmail())
-                .pw(user.getPassword())
+                .password(user.getPassword())
                 .build();
 
         String json = objectMapper.writeValueAsString(request);
@@ -78,7 +78,7 @@ class LoginControllerTest {
         // given
         LoginRequestDto request = LoginRequestDto.builder()
                 .email("")
-                .pw("aaaaa")
+                .password("aaaaa")
                 .build();
 
         String json = objectMapper.writeValueAsString(request);
@@ -101,7 +101,7 @@ class LoginControllerTest {
         // given
         LoginRequestDto request = LoginRequestDto.builder()
                 .email(user.getEmail())
-                .pw("aaaaaa")
+                .password("aaaaaa")
                 .build();
 
         String json = objectMapper.writeValueAsString(request);

@@ -30,7 +30,7 @@ public class UserController {
 
         User user = User.builder()
                 .email(addUserDto.getEmail())
-                .password(addUserDto.getPw())
+                .password(addUserDto.getPassword())
                 .name(addUserDto.getName())
                 .job(addUserDto.getJob())
                 .introduce(addUserDto.getIntroduce())
