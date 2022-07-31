@@ -54,8 +54,6 @@ class PostRepositoryTest {
                 .user(user)
                 .build();
 
-        em.persist(post2);
-
         // when
         Long postId = postRepository.save(post2);
 

@@ -1,6 +1,7 @@
 package com.moti.domain.user.entity;
 
 import com.moti.domain.BaseEntity;
+import com.moti.domain.comment.Comment;
 import com.moti.domain.post.Post;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -40,6 +41,9 @@ public class User extends BaseEntity {
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, Job job, String introduce) {
