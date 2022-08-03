@@ -1,6 +1,7 @@
 package com.moti.domain.comment;
 
 import com.moti.domain.post.Post;
+import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +26,21 @@ public class CommentService {
         return commentRepository.findByPost(post);
     }
 
-    // 댓글 삭제
-    public void remove(Comment comment) {
-        commentRepository.delete(comment);
+    // 댓글 수정
+    public void edit(Long commentId, String content) throws NotFoundException {
+        Comment findComment = commentRepository.findOne(commentId);
+        if (findComment == null) {
+            throw new NotFoundException("Not found");
+        }
+        findComment.changeComment(content);
     }
 
-    // 댓글 수정
-    public void edit(Long commentId, String content) {
+    // 댓글 삭제
+    public void remove(Long commentId) throws NotFoundException {
         Comment findComment = commentRepository.findOne(commentId);
-        findComment.changeComment(content);
+        if (findComment == null) {
+            throw new NotFoundException("Not found");
+        }
+        commentRepository.delete(findComment);
     }
 }

@@ -83,7 +83,7 @@ class CommentServiceTest {
     @DisplayName("댓글 삭제")
     public void remove() throws Exception {
         // when
-        commentService.remove(comment);
+        commentService.remove(comment.getId());
 
         // then
         List<Comment> comments = commentService.findByPost(post);
