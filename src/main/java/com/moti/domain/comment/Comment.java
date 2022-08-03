@@ -46,4 +46,8 @@ public class Comment extends BaseEntity {
         setPost(post);
         setUser(user);
     }
+
+    public void changeComment(String content) {
+        this.content = content;
+    }
 }
