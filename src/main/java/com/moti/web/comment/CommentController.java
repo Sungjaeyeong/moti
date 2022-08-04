@@ -8,9 +8,7 @@ import com.moti.domain.post.PostService;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.User;
 import com.moti.web.SessionConst;
-import com.moti.web.comment.dto.EditCommentDto;
-import com.moti.web.comment.dto.WriteCommentDto;
-import com.moti.web.comment.dto.WriteCommentResponseDto;
+import com.moti.web.comment.dto.*;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -57,9 +56,36 @@ public class CommentController {
 
     // 포스트의 댓글 조회
     @GetMapping()
-    public List<Comment> findByPost(@RequestParam Long postId) {
+    public CommentsResponseDto findByPost(@RequestParam(required = false) Long postId,
+                                          @RequestParam(required = false) Integer page,
+                                          @RequestParam(required = false) Integer maxResults) throws NotFoundException {
+        if (postId == null) {
+            throw new NotFoundException("Not Found");
+        }
         Post post = postService.findOne(postId);
-        return commentService.findByPost(post);
+        if (post == null) {
+            throw new NotFoundException("Not Found");
+        }
+
+        int firstIndex = getFirstIndex(0, page, maxResults);
+
+        List<PostCommentResponseDto> postCommentResponseDtos = commentService.findByPost(post, firstIndex, maxResults)
+                .stream()
+                .map(comment -> new PostCommentResponseDto(comment))
+                .collect(Collectors.toList());
+
+        return CommentsResponseDto.builder()
+                .comments(postCommentResponseDtos)
+                .count(postCommentResponseDtos.size())
+                .build();
+    }
+
+    private int getFirstIndex(int firstIndex, Integer page, Integer maxResults) {
+        if (page != null) {
+            if (maxResults == null) maxResults = 5;
+            firstIndex = page * maxResults - maxResults;
+        }
+        return firstIndex;
     }
 
     // 댓글 수정

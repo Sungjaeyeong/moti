@@ -22,8 +22,10 @@ public class CommentService {
 
     // 특정 포스트 댓글 조회
     @Transactional(readOnly = true)
-    public List<Comment> findByPost(Post post) {
-        return commentRepository.findByPost(post);
+    public List<Comment> findByPost(Post post, Integer firstIndex, Integer maxResults) {
+        if (firstIndex == null) firstIndex = 0;
+        if (maxResults == null) maxResults = 5;
+        return commentRepository.findByPostWithUser(post, firstIndex, maxResults);
     }
 
     // 댓글 수정

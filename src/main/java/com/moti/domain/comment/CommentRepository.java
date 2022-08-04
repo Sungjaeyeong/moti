@@ -39,4 +39,15 @@ public class CommentRepository {
                 .setParameter("post", post)
                 .getResultList();
     }
+
+    public List<Comment> findByPostWithUser(Post post, int firstIndex, int maxResults) {
+        return em.createQuery("select c from Comment c" +
+                        " join fetch c.user u" +
+                        " where c.post = :post" +
+                        " order by c.createdDate desc", Comment.class)
+                .setParameter("post", post)
+                .setFirstResult(firstIndex)
+                .setMaxResults(maxResults)
+                .getResultList();
+    }
 }

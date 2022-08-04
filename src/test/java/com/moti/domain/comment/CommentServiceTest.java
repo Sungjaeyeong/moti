@@ -20,6 +20,7 @@ class CommentServiceTest {
 
     @Autowired EntityManager em;
     @Autowired CommentService commentService;
+    @Autowired CommentRepository commentRepository;
 
     User user;
     Post post;
@@ -71,12 +72,21 @@ class CommentServiceTest {
     @Test
     @DisplayName("포스트의 댓글 조회")
     public void findByPost() throws Exception {
+        // given
+        Comment comment2 = Comment.builder()
+                .content("댓글2")
+                .post(post)
+                .user(user)
+                .build();
+
+        em.persist(comment2);
+
         // when
-        List<Comment> comments = commentService.findByPost(post);
+        List<Comment> comments = commentService.findByPost(post, 0, 1);
 
         // then
         Assertions.assertThat(comments.size()).isEqualTo(1);
-        Assertions.assertThat(comments.get(0).getContent()).isEqualTo("댓글");
+        Assertions.assertThat(comments.get(0).getContent()).isEqualTo("댓글2");
     }
 
     @Test
@@ -86,7 +96,7 @@ class CommentServiceTest {
         commentService.remove(comment.getId());
 
         // then
-        List<Comment> comments = commentService.findByPost(post);
+        List<Comment> comments = commentRepository.findByPost(post);
         Assertions.assertThat(comments.size()).isEqualTo(0);
     }
 
