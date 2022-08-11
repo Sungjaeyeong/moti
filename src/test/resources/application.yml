@@ -6,4 +6,11 @@ spring:
   messages:
     basename: messages, errors
 
+  jpa:
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+
+
 file.dir: /Users/jaeyeong/Desktop/attachfiles/
