@@ -3,7 +3,7 @@ package com.moti.domain.user;
 import com.moti.domain.user.dto.EditUserDto;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
-import com.moti.web.exception.NotFoundUserException;
+import com.moti.domain.exception.NotFoundUserException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

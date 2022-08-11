@@ -1,14 +1,14 @@
-package com.moti.domain.user.entity;
+package com.moti.domain.team.entity;
 
 import com.moti.domain.BaseEntity;
-import com.moti.domain.team.Team;
+import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class UserTeam extends BaseEntity {
+public class TeamUser extends BaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "user_team_id")
@@ -25,18 +25,24 @@ public class UserTeam extends BaseEntity {
     // 연관관계 메서드
     public void setUser(User user) {
         this.user = user;
-        user.getUserTeams().add(this);
+        user.getTeamUsers().add(this);
     }
 
     public void setTeam(Team team) {
         this.team = team;
-        team.getUserTeams().add(this);
     }
 
     public void setUserAndTeam(User user, Team team) {
         this.user = user;
-        user.getUserTeams().add(this);
+        user.getTeamUsers().add(this);
         this.team = team;
-        team.getUserTeams().add(this);
+        team.getTeamUsers().add(this);
+    }
+
+    // 생성 메서드
+    public static TeamUser createTeamUser(User user) {
+        TeamUser teamUser = new TeamUser();
+        teamUser.setUser(user);
+        return teamUser;
     }
 }

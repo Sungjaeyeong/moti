@@ -3,6 +3,7 @@ package com.moti.domain.user.entity;
 import com.moti.domain.BaseEntity;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.post.Post;
+import com.moti.domain.team.entity.TeamUser;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -34,7 +35,7 @@ public class User extends BaseEntity {
     private String introduce;
 
     @OneToMany(mappedBy = "user")
-    private List<UserTeam> userTeams = new ArrayList<>();
+    private List<TeamUser> teamUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<UserChat> userChats = new ArrayList<>();

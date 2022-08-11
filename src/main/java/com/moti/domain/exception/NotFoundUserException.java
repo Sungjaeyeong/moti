@@ -1,4 +1,4 @@
-package com.moti.web.exception;
+package com.moti.domain.exception;
 
 public class NotFoundUserException extends RuntimeException {
 

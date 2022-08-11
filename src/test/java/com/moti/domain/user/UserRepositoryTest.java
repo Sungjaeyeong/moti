@@ -2,13 +2,15 @@ package com.moti.domain.user;
 
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
@@ -31,11 +33,13 @@ class UserRepositoryTest {
         User findUser = userRepository.findOne(saveId);
         Optional<User> byEmailUser = userRepository.findByEmail("aaa@bbb.com");
         User nullUser = userRepository.findOne(2L);
+        List<User> users = userRepository.findAll();
 
         // then
-        Assertions.assertThat(findUser.getId()).isEqualTo(user.getId());
-        Assertions.assertThat(byEmailUser).isEqualTo(Optional.empty());
-        Assertions.assertThat(nullUser).isEqualTo(null);
+        assertThat(findUser.getId()).isEqualTo(user.getId());
+        assertThat(byEmailUser).isEqualTo(Optional.empty());
+        assertThat(nullUser).isEqualTo(null);
+        assertThat(users.size()).isEqualTo(1);
     }
 
 }

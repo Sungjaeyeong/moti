@@ -1,6 +1,6 @@
 package com.moti.web.exceptionhandler.advice;
 
-import com.moti.web.exception.NotFoundUserException;
+import com.moti.domain.exception.NotFoundUserException;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.exception.NotMatchUserException;
 import com.moti.web.exceptionhandler.ErrorResult;

@@ -2,7 +2,7 @@ package com.moti.domain.user;
 
 import com.moti.domain.user.dto.EditUserDto;
 import com.moti.domain.user.entity.User;
-import com.moti.web.exception.NotFoundUserException;
+import com.moti.domain.exception.NotFoundUserException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
