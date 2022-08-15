@@ -9,7 +9,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -115,7 +114,6 @@ class TeamRepositoryTest {
 
     @Test
     @DisplayName("유저와 함께 팀 조회 - 팀 아이디로")
-    @Rollback(value = false)
     public void findTeamByTeam() throws Exception {
         // given
         User user1 = User.builder()
@@ -140,19 +138,6 @@ class TeamRepositoryTest {
         assertThat(findTeam.getTeamUsers().size()).isEqualTo(1);
         String userName = findTeam.getTeamUsers().get(0).getUser().getName();
         assertThat(userName).isEqualTo("wodud2");
-    }
-
-    @Test
-    @DisplayName("유저와 함께 팀 조회 - 유저 아이디로")
-    @Rollback(value = false)
-    public void findTeamByUser() throws Exception {
-        // when
-        Team findTeam = teamRepository.findTeamByUser(user.getId());
-
-        // then
-        assertThat(findTeam.getName()).isEqualTo("팀이름");
-        String userName = findTeam.getTeamUsers().get(0).getUser().getName();
-        assertThat(userName).isEqualTo("wodud");
     }
 
 }

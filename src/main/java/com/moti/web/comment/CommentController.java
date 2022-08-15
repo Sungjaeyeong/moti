@@ -57,8 +57,8 @@ public class CommentController {
     // 포스트의 댓글 조회
     @GetMapping()
     public CommentsResponseDto findByPost(@RequestParam(required = false) Long postId,
-                                          @RequestParam(required = false) Integer page,
-                                          @RequestParam(required = false) Integer maxResults) throws NotFoundException {
+                                          @RequestParam(defaultValue = "1") int page,
+                                          @RequestParam(defaultValue = "5") int maxResults) throws NotFoundException {
         if (postId == null) {
             throw new NotFoundException("Not Found");
         }
@@ -67,7 +67,7 @@ public class CommentController {
             throw new NotFoundException("Not Found");
         }
 
-        int firstIndex = getFirstIndex(0, page, maxResults);
+        int firstIndex = getFirstIndex(page, maxResults);
 
         List<PostCommentResponseDto> postCommentResponseDtos = commentService.findByPost(post, firstIndex, maxResults)
                 .stream()
@@ -80,12 +80,8 @@ public class CommentController {
                 .build();
     }
 
-    private int getFirstIndex(int firstIndex, Integer page, Integer maxResults) {
-        if (page != null) {
-            if (maxResults == null) maxResults = 5;
-            firstIndex = page * maxResults - maxResults;
-        }
-        return firstIndex;
+    private int getFirstIndex(int page, int maxResults) {
+            return page * maxResults - maxResults;
     }
 
     // 댓글 수정

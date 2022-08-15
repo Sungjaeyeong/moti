@@ -161,29 +161,6 @@ class TeamServiceTest {
         }
 
         @Test
-        @DisplayName("특정 유저의 팀 조회")
-        public void findByUser() throws Exception {
-            // given
-            User newUser = User.builder()
-                    .email("jaeyeong@moti.com")
-                    .password("abcdef")
-                    .name("jaeyeong")
-                    .job(Job.DEV)
-                    .build();
-
-            em.persist(newUser);
-            teamService.joinTeam(newUser.getId(), team.getId());
-
-            // when
-            Team findTeam = teamService.findTeamByUser(user.getId());
-
-            // then
-            assertThat(findTeam.getId()).isEqualTo(team.getId());
-            assertThat(findTeam.getTeamUsers().size()).isEqualTo(2);
-            assertThat(findTeam.getTeamUsers().get(1).getUser()).isEqualTo(newUser);
-        }
-
-        @Test
         @DisplayName("모든 팀 조회")
         public void findAllTeam() throws Exception {
             // given

@@ -46,11 +46,6 @@ public class TeamService {
         return teamRepository.findTeamByTeam(teamId);
     }
 
-    // 특정 유저의 팀 조회 (유저포함)
-    public Team findTeamByUser(Long userId) {
-        return teamRepository.findTeamByUser(userId);
-    }
-
     // 모든 팀 조회
     public List<Team> findTeams(int offset, int limit) {
         return teamRepository.findAll(offset, limit);
@@ -63,6 +58,9 @@ public class TeamService {
         User user = userRepository.findOne(userId);
 
         team.removeTeamUser(user);
+        if (team.getTeamUsers().size() == 0) {
+            teamRepository.delete(team);
+        }
     }
 
     // 팀 상태 변경

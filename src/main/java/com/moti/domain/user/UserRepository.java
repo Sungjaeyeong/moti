@@ -37,7 +37,8 @@ public class UserRepository {
     }
 
     public void delete(User user) {
-        em.remove(user);
+        em.createQuery("delete from User u where u.id = :id")
+                        .setParameter("id", user.getId()).executeUpdate();
     }
 
     public void deleteAll() {

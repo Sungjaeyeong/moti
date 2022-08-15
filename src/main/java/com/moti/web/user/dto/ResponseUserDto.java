@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class getUserResponseDto {
+public class ResponseUserDto {
 
     private Long id;
     private String email;
@@ -16,7 +16,7 @@ public class getUserResponseDto {
     private String introduce;
 
     @Builder
-    public getUserResponseDto(Long id, String email, String name, Job job, String introduce) {
+    public ResponseUserDto(Long id, String email, String name, Job job, String introduce) {
         this.id = id;
         this.email = email;
         this.name = name;

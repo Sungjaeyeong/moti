@@ -43,22 +43,17 @@ public class TeamRepository {
         }
     }
 
-    public Team findTeamByUser(Long userId) {
-        try {
-            return em.createQuery("select t from Team t" +
-                            " join fetch t.teamUsers tu" +
-                            " join fetch tu.user u" +
-                            " where u.id = :userId", Team.class)
-                    .setParameter("userId", userId)
-                    .getSingleResult();
-        } catch (NoResultException e) {
-            return null;
-        }
-    }
-
     public Long count() {
         return em.createQuery("select count(t) from Team t", Long.class)
                 .getSingleResult();
+    }
+
+    public void delete(Team team) {
+        em.remove(team);
+    }
+
+    public void deleteAll() {
+        em.createQuery("delete from Team").executeUpdate();
     }
 
 }

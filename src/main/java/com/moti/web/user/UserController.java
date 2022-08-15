@@ -7,7 +7,7 @@ import com.moti.web.SessionConst;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.user.dto.AddUserDto;
 import com.moti.web.user.dto.AddUserResponseDto;
-import com.moti.web.user.dto.getUserResponseDto;
+import com.moti.web.user.dto.ResponseUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -44,9 +44,9 @@ public class UserController {
 
     // 유저정보 조회
     @GetMapping("/{userId}")
-    public getUserResponseDto get(@PathVariable Long userId) {
+    public ResponseUserDto get(@PathVariable Long userId) {
         User findUser = userService.findOne(userId);
-        return getUserResponseDto.builder()
+        return ResponseUserDto.builder()
                 .id(findUser.getId())
                 .email(findUser.getEmail())
                 .name(findUser.getName())
