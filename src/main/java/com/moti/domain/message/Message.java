@@ -1,7 +1,7 @@
 package com.moti.domain.message;
 
 import com.moti.domain.BaseEntity;
-import com.moti.domain.chat.Chat;
+import com.moti.domain.chat.entity.Chat;
 import lombok.Getter;
 
 import javax.persistence.*;

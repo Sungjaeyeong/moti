@@ -1,6 +1,7 @@
 package com.moti.domain.user.entity;
 
 import com.moti.domain.BaseEntity;
+import com.moti.domain.chat.entity.ChatUser;
 import com.moti.domain.comment.Comment;
 import com.moti.domain.post.Post;
 import com.moti.domain.team.entity.TeamUser;
@@ -38,7 +39,7 @@ public class User extends BaseEntity {
     private List<TeamUser> teamUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
-    private List<UserChat> userChats = new ArrayList<>();
+    private List<ChatUser> chatUsers = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
     private List<Post> posts = new ArrayList<>();

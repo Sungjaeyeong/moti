@@ -1,16 +1,16 @@
-package com.moti.domain.user.entity;
+package com.moti.domain.chat.entity;
 
 import com.moti.domain.BaseEntity;
-import com.moti.domain.chat.Chat;
+import com.moti.domain.user.entity.User;
 import lombok.Getter;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-public class UserChat extends BaseEntity {
+public class ChatUser extends BaseEntity {
     @Id @GeneratedValue
-    @Column(name = "user_chat_id")
+    @Column(name = "chat_user_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -24,18 +24,17 @@ public class UserChat extends BaseEntity {
     // 연관관계 메서드
     public void setUser(User user) {
         this.user = user;
-        user.getUserChats().add(this);
+        user.getChatUsers().add(this);
     }
 
     public void setChat(Chat chat) {
         this.chat = chat;
-        chat.getUserChats().add(this);
     }
 
-    public void setUserAndChat(User user, Chat chat) {
-        this.user = user;
-        user.getUserChats().add(this);
-        this.chat = chat;
-        chat.getUserChats().add(this);
+    // 생성 메서드
+    public static ChatUser createChatUser(User user) {
+        ChatUser chatUser = new ChatUser();
+        chatUser.setUser(user);
+        return chatUser;
     }
 }

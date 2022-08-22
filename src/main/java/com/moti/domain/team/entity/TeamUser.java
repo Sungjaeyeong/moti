@@ -11,7 +11,7 @@ import javax.persistence.*;
 public class TeamUser extends BaseEntity {
 
     @Id @GeneratedValue
-    @Column(name = "user_team_id")
+    @Column(name = "team_user_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,13 +30,6 @@ public class TeamUser extends BaseEntity {
 
     public void setTeam(Team team) {
         this.team = team;
-    }
-
-    public void setUserAndTeam(User user, Team team) {
-        this.user = user;
-        user.getTeamUsers().add(this);
-        this.team = team;
-        team.getTeamUsers().add(this);
     }
 
     // 생성 메서드
