@@ -1,7 +1,9 @@
 package com.moti.domain.chat.entity;
 
 import com.moti.domain.BaseEntity;
+import com.moti.domain.exception.NotFoundUserException;
 import com.moti.domain.message.Message;
+import com.moti.domain.user.entity.User;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -32,8 +34,24 @@ public class Chat extends BaseEntity {
 
     // 연관관계 메서드
     public void addChatUser(ChatUser chatUser) {
+        User user = chatUser.getUser();
+        this.chatUsers.forEach(cu -> {
+            if (user.equals(cu.getUser())) {
+                throw new IllegalStateException("이미 포함된 유저입니다.");
+            }
+        });
+
         this.chatUsers.add(chatUser);
         chatUser.setChat(this);
+    }
+
+    public void removeChatUser(Long userId) {
+        ChatUser findChatUser = this.chatUsers.stream()
+                .filter(chatUser -> chatUser.getUser().getId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new NotFoundUserException("존재하지 않는 유저입니다."));
+
+        this.chatUsers.remove(findChatUser);
     }
 
     // 생성 메서드
@@ -43,10 +61,6 @@ public class Chat extends BaseEntity {
         Chat chat = Chat.builder()
                 .name(String.valueOf(str))
                 .build();
-
-        if (chatUserList.size() < 2) {
-            throw new IllegalStateException("인원이 부족합니다.");
-        }
 
         for (ChatUser chatUser : chatUserList) {
             chat.addChatUser(chatUser);
@@ -58,8 +72,15 @@ public class Chat extends BaseEntity {
     private static StringBuffer createChatName(List<ChatUser> chatUserList) {
         StringBuffer result = new StringBuffer("");
         for (ChatUser chatUser : chatUserList) {
-            result.append(chatUser.getUser().getName()).append(" , ");
+            result.append(chatUser.getUser().getName())
+                    .append(", ");
         }
+        result.delete(result.length()-2, result.length());
+
         return result;
+    }
+
+    public void changeChatName(String name) {
+        this.name = name;
     }
 }

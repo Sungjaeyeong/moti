@@ -14,6 +14,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -112,6 +113,16 @@ class ChatRepositoryTest {
     }
 
     @Test
+    @DisplayName("유저정보와 함께 채팅 조회")
+    public void findWithUser() throws Exception {
+        // when
+        Chat findChat = chatRepository.findWithUser(chat1.getId());
+
+        // then
+        assertThat(findChat.getChatUsers().size()).isEqualTo(2);
+    }
+
+    @Test
     @DisplayName("모든 채팅 조회")
     public void findAll() throws Exception {
         // given
@@ -149,6 +160,67 @@ class ChatRepositoryTest {
         // then
         assertThat(chatList.size()).isEqualTo(2);
         assertThat(chatList.get(0)).isEqualTo(chat1);
+    }
+
+    @Test
+    @DisplayName("유저가 속한 채팅 조회")
+    public void findChatsByUser() throws Exception {
+        // given
+        User user3 = User.builder()
+                .email("wodud3@afd.com")
+                .password("abcdef")
+                .name("wodud3")
+                .job(Job.DEV)
+                .build();
+
+        User user4 = User.builder()
+                .email("wodud4@afd.com")
+                .password("abcdef")
+                .name("wodud4")
+                .job(Job.DEV)
+                .build();
+
+        em.persist(user3);
+        em.persist(user4);
+
+        List<ChatUser> chatUserList1 = new ArrayList<>();
+        chatUserList1.add(ChatUser.createChatUser(user1));
+        chatUserList1.add(ChatUser.createChatUser(user3));
+
+        List<ChatUser> chatUserList2 = new ArrayList<>();
+        chatUserList2.add(ChatUser.createChatUser(user1));
+        chatUserList2.add(ChatUser.createChatUser(user4));
+
+        Chat chat2 = Chat.createChat(chatUserList1);
+        Chat chat3 = Chat.createChat(chatUserList2);
+
+        em.persist(chat2);
+        em.persist(chat3);
+
+        // when
+        List<Chat> chatList = chatRepository.findChatsByUser(user1.getId());
+
+        // then
+        assertThat(chatList.size()).isEqualTo(3);
+    }
+
+//    @Test
+    @DisplayName("유저들로 채팅 조회")
+    public void findByUsers() throws Exception {
+        // given
+        List<User> users = new ArrayList<>();
+        users.add(user1);
+        users.add(user2);
+
+        // when
+        Chat findChat = chatRepository.findByUsers(users);
+
+        // then
+        List<User> userList = findChat.getChatUsers().stream()
+                .map(chatUser -> chatUser.getUser())
+                .collect(Collectors.toList());
+
+        assertThat(userList).contains(user1, user2);
     }
 
     @Test

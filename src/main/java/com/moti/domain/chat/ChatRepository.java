@@ -1,6 +1,7 @@
 package com.moti.domain.chat;
 
 import com.moti.domain.chat.entity.Chat;
+import com.moti.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -41,12 +42,26 @@ public class ChatRepository {
                 .getResultList();
     }
 
-    public List<Chat> findChatByUser(Long userId) {
+    public List<Chat> findChatsByUser(Long userId) {
         return em.createQuery("select distinct c from Chat c" +
                         " join fetch c.chatUsers cu" +
-                        " where cu.userId = :userId", Chat.class)
+                        " where cu.user.id = :userId", Chat.class)
                 .setParameter("userId", userId)
                 .getResultList();
+    }
+
+    public Chat findByUsers(List<User> users) {
+        try {
+            return em.createQuery("select distinct c from Chat c" +
+                            " join fetch c.chatUsers cu" +
+                            " where cu.user = :user1" +
+                            " and cu.user = :user2", Chat.class)
+                    .setParameter("user1", users.get(0))
+                    .setParameter("user2", users.get(1))
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     public void delete(Chat chat) {
