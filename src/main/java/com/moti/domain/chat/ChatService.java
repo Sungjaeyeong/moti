@@ -2,7 +2,6 @@ package com.moti.domain.chat;
 
 import com.moti.domain.chat.entity.Chat;
 import com.moti.domain.chat.entity.ChatUser;
-import com.moti.domain.exception.CreateTeamNotAllowedException;
 import com.moti.domain.exception.DuplicateChatException;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.User;
@@ -26,7 +25,7 @@ public class ChatService {
         if (users.size() < 2) {
             throw new IllegalStateException("인원이 부족합니다.");
         }
-//        validateDuplicateUsers(users);
+        validateDuplicateUsers(users);
         List<ChatUser> chatUsers = users.stream().map(user -> ChatUser.createChatUser(user))
                 .collect(Collectors.toList());
 

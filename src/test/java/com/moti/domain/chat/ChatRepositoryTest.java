@@ -204,7 +204,7 @@ class ChatRepositoryTest {
         assertThat(chatList.size()).isEqualTo(3);
     }
 
-//    @Test
+    @Test
     @DisplayName("유저들로 채팅 조회")
     public void findByUsers() throws Exception {
         // given

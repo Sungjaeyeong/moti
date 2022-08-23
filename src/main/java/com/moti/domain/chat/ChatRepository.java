@@ -52,10 +52,13 @@ public class ChatRepository {
 
     public Chat findByUsers(List<User> users) {
         try {
-            return em.createQuery("select distinct c from Chat c" +
-                            " join fetch c.chatUsers cu" +
-                            " where cu.user = :user1" +
-                            " and cu.user = :user2", Chat.class)
+
+            return em.createQuery("select c from Chat c" +
+                    " join c.chatUsers cu" +
+                    " where cu.user = :user1" +
+                    " and c in (select c from Chat c" +
+                    " join c.chatUsers cu" +
+                    " where cu.user = :user2)", Chat.class)
                     .setParameter("user1", users.get(0))
                     .setParameter("user2", users.get(1))
                     .getSingleResult();

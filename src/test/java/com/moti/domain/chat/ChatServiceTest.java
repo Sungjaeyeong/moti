@@ -122,7 +122,7 @@ class ChatServiceTest {
       assertThat(e.getMessage()).isEqualTo("인원이 부족합니다.");
     }
 
-//    @Test
+    @Test
     @DisplayName("채팅 생성 실패 - 중복 1:1 채팅")
     public void createChat_failed2() throws Exception {
       // given
@@ -148,7 +148,7 @@ class ChatServiceTest {
       users.add(user2);
 
       // when
-      Chat chat = chatService.createChat(users);
+      chatService.createChat(users);
       DuplicateChatException e = assertThrows(DuplicateChatException.class, () -> chatService.createChat(users));
 
       assertThat(e.getMessage()).isEqualTo("이미 채팅방이 존재합니다.");
