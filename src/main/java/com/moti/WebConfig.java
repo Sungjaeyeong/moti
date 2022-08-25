@@ -17,7 +17,8 @@ public class WebConfig implements WebMvcConfigurer {
                         "/users/**",
                         "/posts/**",
                         "/comments/**",
-                        "/teams/**"
+                        "/teams/**",
+                        "/chats/**"
                 )
                 .excludePathPatterns(
                         "/users",

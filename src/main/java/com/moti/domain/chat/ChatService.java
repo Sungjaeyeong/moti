@@ -21,7 +21,10 @@ public class ChatService {
     private final UserService userService;
 
     // 채팅 생성
-    public Chat createChat(List<User> users) {
+    public Chat createChat(List<Long> userIds) {
+        List<User> users = userIds.stream().map(userId -> userService.findOne(userId))
+                .collect(Collectors.toList());
+
         if (users.size() < 2) {
             throw new IllegalStateException("인원이 부족합니다.");
         }
