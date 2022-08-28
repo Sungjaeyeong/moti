@@ -92,7 +92,7 @@ public class ChatController {
                 .updatedAt(chat.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
                 .build();
 
-        List<Message> messages = messageService.findMessagesByChat(chatId);
+        List<Message> messages = messageService.findMessagesByChat(chat.getId());
 
         return ResponseChatWithMessageDto.builder()
                 .responseChatDto(responseChatDto)

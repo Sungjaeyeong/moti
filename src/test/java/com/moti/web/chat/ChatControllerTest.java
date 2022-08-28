@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moti.domain.chat.ChatRepository;
 import com.moti.domain.chat.ChatService;
 import com.moti.domain.chat.entity.Chat;
+import com.moti.domain.message.MessageService;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
 import com.moti.web.SessionConst;
@@ -44,6 +45,7 @@ class ChatControllerTest {
     @Autowired EntityManager em;
     @Autowired ChatRepository chatRepository;
     @Autowired ChatService chatService;
+    @Autowired MessageService messageService;
 
     User initUser1;
     User initUser2;
@@ -166,6 +168,23 @@ class ChatControllerTest {
                     .getSingleResult();
             assertThat(chatUserCount).isEqualTo(2L);
         }
+    }
+
+    @Test
+    @DisplayName("채팅 조회 메세지 포함")
+    public void findUserChat() throws Exception {
+        // given
+        messageService.createMessage("hello", initUser2.getId(), initChat.getId());
+        messageService.createMessage("abc", initUser1.getId(), initChat.getId());
+        messageService.createMessage("def", initUser1.getId(), initChat.getId());
+
+        // when
+        mockMvc.perform(get("/chats/{chatId}", initChat.getId())
+                        .session(session)
+                )
+                .andExpect(status().isOk())
+                .andDo(print());
+
     }
 
     @Nested
