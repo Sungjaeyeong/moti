@@ -61,6 +61,17 @@ public class CommonControllerAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
+    public ErrorResult IllegalStateExHandle(IllegalStateException e) {
+        log.error("[exceptionHandle] exception", e);
+
+        return ErrorResult.builder()
+                .code("404")
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
     public ErrorResult typeExHandle(MethodArgumentTypeMismatchException e) {
         log.error("[exceptionHandle] exception", e);
 
