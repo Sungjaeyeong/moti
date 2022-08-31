@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -38,7 +37,6 @@ public class LoginController {
 
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginUser.getId());
-        response.addCookie(new Cookie(SessionConst.LOGIN_USER, String.valueOf(loginUser.getId())));
         return new LoginResponseDto(loginUser);
     }
 
