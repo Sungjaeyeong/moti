@@ -18,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -95,9 +96,14 @@ class UserControllerTest {
                 .build();
         Long userId = userRepository.save(user);
 
+        MockHttpSession session = new MockHttpSession();
+        session.setAttribute(SessionConst.LOGIN_USER, userId);
+
         // when, then
-        mockMvc.perform(get("/users/{userId}", userId)
-                .contentType(MediaType.APPLICATION_JSON))
+        mockMvc.perform(get("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .session(session)
+                )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(user.getId()))
                 .andExpect(jsonPath("$.email").value(user.getEmail()))

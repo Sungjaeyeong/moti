@@ -43,8 +43,15 @@ public class UserController {
     }
 
     // 유저정보 조회
-    @GetMapping("/{userId}")
-    public ResponseUserDto get(@PathVariable Long userId) {
+    @GetMapping()
+    public ResponseUserDto get(HttpServletRequest request) {
+
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+            return null;
+        }
+        Long userId = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+
         User findUser = userService.findOne(userId);
         return ResponseUserDto.builder()
                 .id(findUser.getId())
