@@ -4,12 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moti.web.SessionConst;
 import com.moti.web.exceptionhandler.ErrorResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.util.Objects;
 
 @Slf4j
 public class LoginCheckInterceptor implements HandlerInterceptor {
@@ -21,9 +21,13 @@ public class LoginCheckInterceptor implements HandlerInterceptor {
 
         String requestURI = request.getRequestURI();
 
-        if (Objects.equals(request.getMethod(), "GET")) {
+        if (HttpMethod.OPTIONS.matches(request.getMethod())) {
             return true;
         }
+        if (HttpMethod.GET.matches(request.getMethod())) {
+            return true;
+        }
+
         log.info("로그인 체크 인터셉터 - requestURI: {}", requestURI);
 
         HttpSession session = request.getSession(false);
