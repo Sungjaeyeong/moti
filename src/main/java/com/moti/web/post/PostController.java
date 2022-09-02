@@ -37,7 +37,7 @@ public class PostController {
 
     // 포스트 작성
     @PostMapping()
-    public CreatePostResponseDto write(@ModelAttribute @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
+    public CreatePostResponseDto write(@RequestBody @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
 
         HttpSession session = request.getSession(false);
         Long userId = createPostDto.getUserId();

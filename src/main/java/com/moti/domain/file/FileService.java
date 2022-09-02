@@ -22,6 +22,9 @@ public class FileService {
 
     // 여러 파일 저장
     public List<com.moti.domain.file.File> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
+        if (multipartFiles == null) {
+            return null;
+        }
         List<com.moti.domain.file.File> storeFileList = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             if (!multipartFile.isEmpty()) {
