@@ -1,6 +1,7 @@
 package com.moti.web.post;
 
 import com.moti.domain.file.File;
+import com.moti.domain.file.FileRepository;
 import com.moti.domain.file.FileService;
 import com.moti.domain.post.Post;
 import com.moti.domain.post.PostService;
@@ -16,12 +17,19 @@ import com.moti.web.post.dto.PostResponseDto;
 import javassist.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,10 +42,11 @@ public class PostController {
     private final PostService postService;
     private final UserService userService;
     private final FileService fileService;
+    private final FileRepository fileRepository;
 
     // 포스트 작성
     @PostMapping()
-    public CreatePostResponseDto write(@RequestBody @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
+    public CreatePostResponseDto write(@ModelAttribute @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
 
         HttpSession session = request.getSession(false);
         Long userId = createPostDto.getUserId();
@@ -86,8 +95,7 @@ public class PostController {
         }
 
         return PostList.stream()
-                .map((post -> new PostResponseDto(post))
-                )
+                .map((post -> new PostResponseDto(post)))
                 .collect(Collectors.toList());
     }
 
@@ -128,6 +136,21 @@ public class PostController {
             log.info("request session LOGIN_USER: {}", sessionUserId);
             throw new NotMatchLoginUserSessionException();
         }
+    }
+
+    @GetMapping("/attach/{fileId}")
+    public ResponseEntity<Resource> downloadAttach(@PathVariable Long fileId) throws MalformedURLException {
+        File file = fileRepository.findById(fileId);
+        String storeFileName = file.getStoreFileName();
+        String uploadFileName = file.getUploadFileName();
+
+        UrlResource urlResource = new UrlResource("file:" + fileService.getFullPath(storeFileName));
+        String encodeUploadFileName = UriUtils.encode(uploadFileName, StandardCharsets.UTF_8);
+        String contentDisposition = "attachment; filename=\"" + encodeUploadFileName + "\"";
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
+                .body(urlResource);
     }
 
 }
