@@ -44,7 +44,7 @@ public class CommentController {
         Post findPost = postService.findOne(writeCommentDto.getPostId());
 
         Comment comment = Comment.builder()
-                .content("댓글 작성")
+                .content(writeCommentDto.getContent())
                 .user(findUser)
                 .post(findPost)
                 .build();

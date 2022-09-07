@@ -1,6 +1,7 @@
 package com.moti.domain.team;
 
 import com.moti.domain.team.entity.Team;
+import com.moti.domain.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -21,6 +22,14 @@ public class TeamRepository {
 
     public Team findOne(Long teamId) {
         return em.find(Team.class, teamId);
+    }
+
+    public List<Team> findTeamsByUser(User user) {
+        return em.createQuery("select t from Team t" +
+                " join t.teamUsers tu" +
+                " where tu.user = :user", Team.class)
+                .setParameter("user", user)
+                .getResultList();
     }
 
     public List<Team> findAll(int offset, int limit) {

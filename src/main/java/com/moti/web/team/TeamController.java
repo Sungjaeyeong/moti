@@ -38,9 +38,14 @@ public class TeamController {
     // 팀 전부 조회 (유저포함)
     @GetMapping()
     public ResponseTeamsDto findAll(@RequestParam(defaultValue = "1") int page,
-                                         @RequestParam(defaultValue = "5") int limit) {
+                                         @RequestParam(defaultValue = "5") int limit,
+                                            @RequestParam(required = false) Long userId) {
+        List<Team> teams;
+        teams = teamService.findTeams(getOffset(page, limit), limit);
+        if (userId != null) {
+            teams = teamService.findTeamsByUser(userId);
+        }
 
-        List<Team> teams = teamService.findTeams(getOffset(page, limit), limit);
         List<ResponseTeamDto> responseTeamDtoList = teams.stream()
                 .map(team -> mapResponseTeamDto(team))
                 .collect(Collectors.toList());

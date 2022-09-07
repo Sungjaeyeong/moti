@@ -41,6 +41,12 @@ public class TeamService {
         team.addTeamUser(teamUser);
     }
 
+    // 유저가 속한 팀 조회
+    public List<Team> findTeamsByUser(Long userId) {
+        User user = userRepository.findOne(userId);
+        return teamRepository.findTeamsByUser(user);
+    }
+
     // 팀 조회 (유저포함)
     public Team findTeamByTeam(Long teamId) {
         return teamRepository.findTeamByTeam(teamId);
