@@ -4,8 +4,10 @@ import com.moti.domain.BaseEntity;
 import com.moti.domain.chat.entity.Chat;
 import com.moti.domain.exception.NotMemberInChatException;
 import com.moti.domain.exception.NotMessageOwnerException;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
@@ -14,6 +16,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Message extends BaseEntity {
 
     @Id @GeneratedValue

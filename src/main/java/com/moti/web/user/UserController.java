@@ -1,5 +1,6 @@
 package com.moti.web.user;
 
+import com.moti.domain.user.UserRepository;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.dto.EditUserDto;
 import com.moti.domain.user.entity.User;
@@ -7,6 +8,7 @@ import com.moti.web.SessionConst;
 import com.moti.web.exception.NotMatchLoginUserSessionException;
 import com.moti.web.user.dto.AddUserDto;
 import com.moti.web.user.dto.AddUserResponseDto;
+import com.moti.web.user.dto.AllUserDto;
 import com.moti.web.user.dto.ResponseUserDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController()
@@ -23,6 +27,7 @@ import javax.servlet.http.HttpSession;
 public class UserController {
 
     private final UserService userService;
+    private final UserRepository userRepository;
 
     // 회원가입
     @PostMapping()
@@ -74,6 +79,16 @@ public class UserController {
         }
 
         userService.edit(userId, editUserDto);
+    }
+
+    // 전체 유저 조회
+    @GetMapping("/all")
+    public List<AllUserDto> getAllUser() {
+        List<User> users = userRepository.findAll();
+        return users.stream().map(user -> AllUserDto.builder()
+                .user(user)
+                .build())
+                .collect(Collectors.toList());
     }
 
 }

@@ -4,8 +4,10 @@ import com.moti.domain.BaseEntity;
 import com.moti.domain.exception.NotFoundUserException;
 import com.moti.domain.message.Message;
 import com.moti.domain.user.entity.User;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Chat extends BaseEntity {
 
     @Id @GeneratedValue
