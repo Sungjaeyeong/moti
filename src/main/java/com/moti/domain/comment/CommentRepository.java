@@ -50,4 +50,11 @@ public class CommentRepository {
                 .setMaxResults(maxResults)
                 .getResultList();
     }
+
+    public Long countByPost(Post post) {
+        return em.createQuery("select count(c) from Comment c" +
+                        " where c.post = :post", Long.class)
+                .setParameter("post", post)
+                .getSingleResult();
+    }
 }

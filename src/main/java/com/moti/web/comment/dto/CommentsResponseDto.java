@@ -13,10 +13,10 @@ public class CommentsResponseDto {
 
     private List<PostCommentResponseDto> comments;
 
-    private int count;
+    private Long count;
 
     @Builder
-    public CommentsResponseDto(List<PostCommentResponseDto> comments, int count) {
+    public CommentsResponseDto(List<PostCommentResponseDto> comments, Long count) {
         this.comments = comments;
         this.count = count;
     }

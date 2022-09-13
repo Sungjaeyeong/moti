@@ -74,9 +74,11 @@ public class CommentController {
                 .map(comment -> new PostCommentResponseDto(comment))
                 .collect(Collectors.toList());
 
+        Long count = commentRepository.countByPost(post);
+
         return CommentsResponseDto.builder()
                 .comments(postCommentResponseDtos)
-                .count(postCommentResponseDtos.size())
+                .count(count)
                 .build();
     }
 
