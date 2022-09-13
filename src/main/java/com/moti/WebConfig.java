@@ -1,5 +1,6 @@
 package com.moti;
 
+import com.moti.web.interceptor.LogInterceptor;
 import com.moti.web.interceptor.LoginCheckInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -19,8 +20,13 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginCheckInterceptor())
+        registry.addInterceptor(new LogInterceptor())
                 .order(1)
+                .addPathPatterns("/**")
+                .excludePathPatterns("/css/**", "/*.ico", "/error");
+
+        registry.addInterceptor(new LoginCheckInterceptor())
+                .order(2)
                 .addPathPatterns(
                         "/users/**",
                         "/posts/**",
