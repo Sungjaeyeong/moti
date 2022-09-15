@@ -1,0 +1,243 @@
+= moti API Documents
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 3
+:sectlinks:
+
+== 인증
+
+=== 로그인
+==== 요청
+include::{snippets}/login/request-fields.adoc[]
+include::{snippets}/login/http-request.adoc[]
+
+==== 응답
+include::{snippets}/login/response-fields.adoc[]
+include::{snippets}/login/http-response.adoc[]
+
+=== 로그아웃
+==== 요청
+include::{snippets}/logout/http-request.adoc[]
+
+==== 응답
+include::{snippets}/logout/response-body.adoc[]
+include::{snippets}/logout/http-response.adoc[]
+
+== 유저
+
+=== 새로운 유저 생성
+==== 요청
+include::{snippets}/create-user/request-fields.adoc[]
+include::{snippets}/create-user/http-request.adoc[]
+
+==== 응답
+include::{snippets}/create-user/response-fields.adoc[]
+include::{snippets}/create-user/http-response.adoc[]
+
+=== 유저 정보 조회
+==== 요청
+include::{snippets}/get-user/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-user/response-fields.adoc[]
+include::{snippets}/get-user/http-response.adoc[]
+
+=== 유저 정보 수정
+==== 요청
+include::{snippets}/update-user/path-parameters.adoc[]
+include::{snippets}/update-user/request-fields.adoc[]
+include::{snippets}/update-user/http-request.adoc[]
+
+==== 응답
+include::{snippets}/update-user/http-response.adoc[]
+
+== 게시글
+
+=== 게시글 한개 조회
+==== 요청
+include::{snippets}/get-post/path-parameters.adoc[]
+include::{snippets}/get-post/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-post/response-fields.adoc[]
+include::{snippets}/get-post/http-response.adoc[]
+
+=== 게시글 모두 조회
+==== 요청
+include::{snippets}/get-posts/request-parameters.adoc[]
+include::{snippets}/get-posts/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-posts/response-body.adoc[]
+include::{snippets}/get-posts/http-response.adoc[]
+
+=== 게시글 삭제
+==== 요청
+include::{snippets}/delete-post/path-parameters.adoc[]
+include::{snippets}/delete-post/http-request.adoc[]
+
+==== 응답
+include::{snippets}/delete-post/http-response.adoc[]
+
+== 댓글
+
+=== 댓글 생성
+==== 요청
+include::{snippets}/create-comment/request-fields.adoc[]
+include::{snippets}/create-comment/http-request.adoc[]
+
+==== 응답
+include::{snippets}/create-comment/response-fields.adoc[]
+include::{snippets}/create-comment/http-response.adoc[]
+
+=== 댓글 조회
+==== 요청
+include::{snippets}/get-comment/request-parameters.adoc[]
+include::{snippets}/get-comment/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-comment/response-fields.adoc[]
+include::{snippets}/get-comment/http-response.adoc[]
+
+=== 댓글 수정
+==== 요청
+include::{snippets}/update-comment/path-parameters.adoc[]
+include::{snippets}/update-comment/request-fields.adoc[]
+include::{snippets}/update-comment/http-request.adoc[]
+
+==== 응답
+include::{snippets}/update-comment/http-response.adoc[]
+
+=== 댓글 삭제
+==== 요청
+include::{snippets}/delete-comment/path-parameters.adoc[]
+include::{snippets}/delete-comment/http-request.adoc[]
+
+==== 응답
+include::{snippets}/delete-comment/http-response.adoc[]
+
+== 팀
+
+=== 팀 생성
+==== 요청
+include::{snippets}/create-team/request-fields.adoc[]
+include::{snippets}/create-team/http-request.adoc[]
+
+==== 응답
+include::{snippets}/create-team/response-fields.adoc[]
+include::{snippets}/create-team/http-response.adoc[]
+
+=== 팀 가입
+==== 요청
+include::{snippets}/join-team/path-parameters.adoc[]
+include::{snippets}/join-team/request-fields.adoc[]
+include::{snippets}/join-team/http-request.adoc[]
+
+==== 응답
+include::{snippets}/join-team/http-response.adoc[]
+
+=== 팀 전부 조회
+==== 요청
+include::{snippets}/get-teams/request-parameters.adoc[]
+include::{snippets}/get-teams/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-teams/response-fields.adoc[]
+include::{snippets}/get-teams/http-response.adoc[]
+
+=== 특정 팀 조회
+==== 요청
+include::{snippets}/get-team/path-parameters.adoc[]
+include::{snippets}/get-team/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-team/response-fields.adoc[]
+include::{snippets}/get-team/http-response.adoc[]
+
+=== 팀 수정
+==== 요청
+include::{snippets}/update-team/path-parameters.adoc[]
+include::{snippets}/update-team/request-fields.adoc[]
+include::{snippets}/update-team/http-request.adoc[]
+
+==== 응답
+include::{snippets}/update-team/http-response.adoc[]
+
+=== 팀 삭제
+==== 요청
+include::{snippets}/exit-team/path-parameters.adoc[]
+include::{snippets}/exit-team/http-request.adoc[]
+
+==== 응답
+include::{snippets}/exit-team/http-response.adoc[]
+
+== 채팅
+
+=== 채팅 생성
+==== 요청
+include::{snippets}/create-chat/request-fields.adoc[]
+include::{snippets}/create-chat/http-request.adoc[]
+
+==== 응답
+include::{snippets}/create-chat/response-fields.adoc[]
+include::{snippets}/create-chat/http-response.adoc[]
+
+=== 유저가 속한 채팅 조회
+==== 요청
+include::{snippets}/get-chats/request-parameters.adoc[]
+include::{snippets}/get-chats/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-chats/response-fields.adoc[]
+include::{snippets}/get-chats/http-response.adoc[]
+
+=== 채팅 조회 (메세지 포함)
+==== 요청
+include::{snippets}/get-chat/path-parameters.adoc[]
+include::{snippets}/get-chat/http-request.adoc[]
+
+==== 응답
+include::{snippets}/get-chat/response-fields.adoc[]
+include::{snippets}/get-chat/http-response.adoc[]
+
+=== 채팅 초대
+==== 요청
+include::{snippets}/invite-chat/request-fields.adoc[]
+include::{snippets}/invite-chat/http-request.adoc[]
+
+==== 응답
+include::{snippets}/invite-chat/http-response.adoc[]
+
+=== 채팅 나가기
+==== 요청
+include::{snippets}/exit-chat/request-fields.adoc[]
+include::{snippets}/exit-chat/http-request.adoc[]
+
+==== 응답
+include::{snippets}/exit-chat/http-response.adoc[]
+
+=== 채팅방 이름 변경
+==== 요청
+include::{snippets}/change-chat/request-fields.adoc[]
+include::{snippets}/change-chat/http-request.adoc[]
+
+==== 응답
+include::{snippets}/change-chat/http-response.adoc[]
+
+== 메세지
+
+=== 메세지 생성
+==== 요청
+include::{snippets}/create-message/request-fields.adoc[]
+include::{snippets}/create-message/http-request.adoc[]
+
+==== 응답
+include::{snippets}/create-message/http-response.adoc[]
+
+=== 메세지 삭제
+==== 요청
+include::{snippets}/delete-message/path-parameters.adoc[]
+include::{snippets}/delete-message/http-request.adoc[]
+
+==== 응답
+include::{snippets}/delete-message/http-response.adoc[]

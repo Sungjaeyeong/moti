@@ -12,15 +12,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -29,6 +37,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class UserControllerTest {
 
     @Autowired ObjectMapper objectMapper;
@@ -45,6 +55,7 @@ class UserControllerTest {
                 .password("abcdef")
                 .name("재영")
                 .job(Job.DEV)
+                .introduce("개발자 재영입니다.")
                 .build();
 
         String json = objectMapper.writeValueAsString(request);
@@ -54,8 +65,20 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                 )
-                .andExpect(status().isOk());
-//                .andDo(print());
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document("create-user",
+                        requestFields(
+                                fieldWithPath("email").description("이메일").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("password").description("비밀번호").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("name").description("이름").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("job").description("직업: 'DEV' OR 'PM'").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("introduce").description("소개").attributes(Attributes.key("required").value("X"))
+                        ),
+                        responseFields(
+                                fieldWithPath("id").description("유저 ID")
+                        )
+                ));
 
         Assertions.assertThat(1L).isEqualTo(userRepository.count());
     }
@@ -110,7 +133,16 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.name").value(user.getName()))
                 .andExpect(jsonPath("$.job").value("DEV"))
                 .andExpect(jsonPath("$.introduce").value(user.getIntroduce()))
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("get-user",
+                        responseFields(
+                                fieldWithPath("id").description("유저 ID"),
+                                fieldWithPath("email").description("이메일"),
+                                fieldWithPath("name").description("유저 이름"),
+                                fieldWithPath("job").description("직업"),
+                                fieldWithPath("introduce").description("소개")
+                        )
+                ));
 
     }
 
@@ -147,12 +179,19 @@ class UserControllerTest {
             String json = objectMapper.writeValueAsString(editUserDto);
 
             // when, then
-            mockMvc.perform(patch("/users/{userId}", userId)
+            mockMvc.perform(RestDocumentationRequestBuilders.patch("/users/{userId}", userId)
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(json)
                             .session(session))
                     .andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("update-user",
+                            pathParameters(parameterWithName("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))),
+                            requestFields(
+                                    fieldWithPath("name").description("이름").attributes(Attributes.key("required").value("O")),
+                                    fieldWithPath("introduce").description("소개").attributes(Attributes.key("required").value("O"))
+                            )
+                    ));
         }
 
         @Test

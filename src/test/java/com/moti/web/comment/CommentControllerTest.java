@@ -13,19 +13,27 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,6 +42,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class CommentControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -96,7 +106,17 @@ class CommentControllerTest {
                     .session(session)
             )
                     .andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("create-comment",
+                            requestFields(
+                                    fieldWithPath("content").description("댓글 내용").attributes(Attributes.key("required").value("O")),
+                                    fieldWithPath("postId").description("포스트 ID").attributes(Attributes.key("required").value("O")),
+                                    fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                            ),
+                            responseFields(
+                                    fieldWithPath("id").description("댓글 ID")
+                            )
+                    ));
 
             // then
             assertThat(em.createQuery("select count(c) from Comment c", Long.class).getSingleResult()).isEqualTo(2L);
@@ -153,7 +173,7 @@ class CommentControllerTest {
                             .param("postId", String.valueOf(post.getId()))
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.count").value(5))
+                    .andExpect(jsonPath("$.count").value(21))
                     .andDo(print())
                     .andReturn();
 
@@ -182,8 +202,24 @@ class CommentControllerTest {
                             .param("maxResults", String.valueOf(10))
                     )
                     .andExpect(status().isOk())
-                    .andExpect(jsonPath("$.count").value(10))
+                    .andExpect(jsonPath("$.count").value(21))
                     .andDo(print())
+                    .andDo(document("get-comment",
+                            requestParameters(
+                                    parameterWithName("postId").description("포스트 ID"),
+                                    parameterWithName("page").description("불러올 페이지"),
+                                    parameterWithName("maxResults").description("한 페이지의 최대 데이터 개수")
+                            ),
+                            responseFields(
+                                    fieldWithPath("comments[]").description("댓글 리스트"),
+                                    fieldWithPath("count").description("총 댓글 개수")
+                            ).andWithPrefix("comments[].", new FieldDescriptor[] {
+                                    fieldWithPath("contentId").description("댓글 ID"),
+                                    fieldWithPath("content").description("댓글 내용"),
+                                    fieldWithPath("userName").description("댓글 작성 유저이름"),
+                                    fieldWithPath("userId").description("댓글 작성 유저 ID"),
+                            })
+                    ))
                     .andReturn();
 
             String contentAsString = mvcResult.getResponse().getContentAsString();
@@ -207,12 +243,19 @@ class CommentControllerTest {
             String json = objectMapper.writeValueAsString(editCommentDto);
 
             // when
-            mockMvc.perform(patch("/comments/{commentId}", comment.getId())
+            mockMvc.perform(RestDocumentationRequestBuilders.patch("/comments/{commentId}", comment.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(json)
                             .session(session)
                     )
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("update-comment",
+                            pathParameters(parameterWithName("commentId").description("댓글 ID").attributes(Attributes.key("required").value("O"))),
+                            requestFields(
+                                    fieldWithPath("comment").description("수정 댓글 내용").attributes(Attributes.key("required").value("O")),
+                                    fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                            )
+                    ));
 
             // then
             Comment findComment = em.find(Comment.class, CommentControllerTest.this.comment.getId());
@@ -249,11 +292,14 @@ class CommentControllerTest {
     @DisplayName("댓글 삭제")
     public void delete() throws Exception {
         // when
-        mockMvc.perform(MockMvcRequestBuilders.delete("/comments/{commentId}", comment.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/comments/{commentId}", comment.getId())
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("delete-comment",
+                        pathParameters(parameterWithName("commentId").description("댓글 ID").attributes(Attributes.key("required").value("O")))
+                ));
 
         // then
         Comment findComment = em.find(Comment.class, comment.getId());

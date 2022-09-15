@@ -13,11 +13,16 @@ import com.moti.web.message.dto.SendMessageDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,7 +31,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -34,6 +43,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class MessageControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -101,7 +112,14 @@ class MessageControllerTest {
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("create-message",
+                        requestFields(
+                                fieldWithPath("message").description("메세지 내용").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                        )
+                ));
 
         // then
         Long messageCount = em.createQuery("select count(m) from Message m", Long.class)
@@ -111,7 +129,7 @@ class MessageControllerTest {
 
     @Test
     @DisplayName("메세지 삭제")
-    public void tdd() throws Exception {
+    public void deleteMessage() throws Exception {
         // given
         DeleteMessageDto deleteMessageDto = DeleteMessageDto.builder()
                 .userId(initUser2.getId())
@@ -120,13 +138,16 @@ class MessageControllerTest {
         String json = objectMapper.writeValueAsString(deleteMessageDto);
 
         // when
-        mockMvc.perform(delete("/messages/{messageId}", initMessage.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/messages/{messageId}", initMessage.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("delete-message",
+                        pathParameters(parameterWithName("messageId").description("메세지 ID").attributes(Attributes.key("required").value("O")))
+                ));
 
         // then
         Long messageCount = em.createQuery("select count(m) from Message m", Long.class)

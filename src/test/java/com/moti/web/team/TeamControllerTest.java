@@ -14,11 +14,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +32,10 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,6 +44,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class TeamControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -89,7 +101,16 @@ class TeamControllerTest {
                             .session(session)
                     )
                     .andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("create-team",
+                            requestFields(
+                                    fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O")),
+                                    fieldWithPath("teamName").description("팀이름").attributes(Attributes.key("required").value("O"))
+                            ),
+                            responseFields(
+                                    fieldWithPath("id").description("팀 ID")
+                            )
+                    ));
 
             // then
             Long count = teamRepository.count();
@@ -147,13 +168,19 @@ class TeamControllerTest {
             String json = objectMapper.writeValueAsString(joinTeamDto);
 
             // when
-            mockMvc.perform(post("/teams/{teamId}", team.getId())
+            mockMvc.perform(RestDocumentationRequestBuilders.post("/teams/{teamId}", team.getId())
                             .contentType(MediaType.APPLICATION_JSON)
                             .content(json)
                             .session(session)
                     )
                     .andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("join-team",
+                            pathParameters(parameterWithName("teamId").description("팀 ID").attributes(Attributes.key("required").value("O"))),
+                            requestFields(
+                                    fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                            )
+                    ));
 
             // then
             assertThat(team.getTeamUsers().size()).isEqualTo(2);
@@ -235,6 +262,27 @@ class TeamControllerTest {
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.count").value(4))
                     .andDo(print())
+                    .andDo(document("get-teams",
+                            requestParameters(
+                                    parameterWithName("page").description("불러올 페이지"),
+                                    parameterWithName("limit").description("한 페이지의 최대 데이터 개수")
+                            ),
+                            responseFields(
+                                    fieldWithPath("responseTeamDtoList[]").description("팀 리스트"),
+                                    fieldWithPath("count").description("총 팀 수")
+                            ).andWithPrefix("responseTeamDtoList[].", new FieldDescriptor[] {
+                                    fieldWithPath("teamId").description("팀 ID"),
+                                    fieldWithPath("teamName").description("팀 이름"),
+                                    fieldWithPath("teamStatus").description("팀 상태"),
+                                    fieldWithPath("teamUsers[]").description("유저 리스트"),
+                            }).andWithPrefix("responseTeamDtoList[].teamUsers[].", new FieldDescriptor[] {
+                                    fieldWithPath("id").description("유저 ID"),
+                                    fieldWithPath("email").description("이메일"),
+                                    fieldWithPath("name").description("유저 이름"),
+                                    fieldWithPath("job").description("유저 직업"),
+                                    fieldWithPath("introduce").description("유저 소개"),
+                            })
+                    ))
                     .andReturn();
 
             // then
@@ -269,11 +317,26 @@ class TeamControllerTest {
             teamService.joinTeam(newUser2.getId(), team.getId());
 
             // when
-            MvcResult mvcResult = mockMvc.perform(get("/teams/{teamId}", team.getId())
+            MvcResult mvcResult = mockMvc.perform(RestDocumentationRequestBuilders.get("/teams/{teamId}", team.getId())
                     )
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.teamName").value("team"))
                     .andDo(print())
+                    .andDo(document("get-team",
+                            pathParameters(parameterWithName("teamId").description("팀 ID").attributes(Attributes.key("required").value("O"))),
+                            responseFields(
+                                    fieldWithPath("teamId").description("팀 ID"),
+                                    fieldWithPath("teamName").description("팀 이름"),
+                                    fieldWithPath("teamStatus").description("팀 상태"),
+                                    fieldWithPath("teamUsers[]").description("팀에 속한 유저 리스트")
+                            ).andWithPrefix("teamUsers[].", new FieldDescriptor[] {
+                                    fieldWithPath("id").description("유저 ID"),
+                                    fieldWithPath("email").description("이메일"),
+                                    fieldWithPath("name").description("유저 이름"),
+                                    fieldWithPath("job").description("유저 직업"),
+                                    fieldWithPath("introduce").description("유저 소개"),
+                            })
+                    ))
                     .andReturn();
 
             // then
@@ -295,13 +358,19 @@ class TeamControllerTest {
         String json = objectMapper.writeValueAsString(changeTeamStatusDto);
 
         // when
-        mockMvc.perform(patch("/teams/{teamId}", team.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.patch("/teams/{teamId}", team.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json)
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("update-team",
+                        pathParameters(parameterWithName("teamId").description("팀 ID").attributes(Attributes.key("required").value("O"))),
+                        requestFields(
+                                fieldWithPath("teamStatus").description("팀 상태").attributes(Attributes.key("required").value("O"))
+                        )
+                ));
 
         // then
         assertThat(team.getStatus()).isEqualTo(TeamStatus.COMP);
@@ -311,11 +380,17 @@ class TeamControllerTest {
     @DisplayName("팀 탈퇴")
     public void leaveTeam() throws Exception {
         // when
-        mockMvc.perform(delete("/teams/{teamId}/users/{userId}", team.getId(), user.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/teams/{teamId}/users/{userId}", team.getId(), user.getId())
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("exit-team",
+                        pathParameters(
+                                parameterWithName("teamId").description("팀 ID").attributes(Attributes.key("required").value("O")),
+                                parameterWithName("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                        )
+                ));
 
         // then
         Long count = teamRepository.count();

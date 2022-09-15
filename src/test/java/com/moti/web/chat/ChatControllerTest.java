@@ -16,11 +16,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +35,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -38,6 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class ChatControllerTest {
 
     @Autowired MockMvc mockMvc;
@@ -117,7 +129,15 @@ class ChatControllerTest {
                     .session(session)
                     )
                     .andExpect(status().isOk())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("create-chat",
+                            requestFields(
+                                    fieldWithPath("userIds").description("유저 리스트").attributes(Attributes.key("required").value("O"))
+                            ),
+                            responseFields(
+                                    fieldWithPath("id").description("채팅 ID")
+                            )
+                    ));
 
             // then
             Long count = chatRepository.count();
@@ -179,11 +199,28 @@ class ChatControllerTest {
         messageService.createMessage("def", initUser1.getId(), initChat.getId());
 
         // when
-        mockMvc.perform(get("/chats/{chatId}", initChat.getId())
+        mockMvc.perform(RestDocumentationRequestBuilders.get("/chats/{chatId}", initChat.getId())
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("get-chat",
+                        pathParameters(parameterWithName("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O"))),
+                        responseFields(
+                                fieldWithPath("responseChatDto").description("댓글 리스트"),
+                                fieldWithPath("messages[]").description("총 댓글 개수")
+                        ).andWithPrefix("messages[].", new FieldDescriptor[] {
+                                fieldWithPath("messageId").description("메세지 ID"),
+                                fieldWithPath("userId").description("유저 ID"),
+                                fieldWithPath("message").description("메세지 내용"),
+                        }).andWithPrefix("responseChatDto.", new FieldDescriptor[] {
+                                fieldWithPath("chatId").description("채팅 ID"),
+                                fieldWithPath("chatName").description("채팅 제목"),
+                                fieldWithPath("userCount").description("채팅방 유저 수"),
+                                fieldWithPath("createdAt").description("채팅 생성일"),
+                                fieldWithPath("updatedAt").description("채팅 업데이트일"),
+                        })
+                ));
 
     }
 
@@ -192,7 +229,7 @@ class ChatControllerTest {
     class FindUserChat {
         @Test
         @DisplayName("채팅 조회 성공")
-        public void findUserChat() throws Exception {
+        public void findUserChats() throws Exception {
             // when
             mockMvc.perform(get("/chats")
                             .param("userId", String.valueOf(initUser1.getId()))
@@ -206,7 +243,22 @@ class ChatControllerTest {
                     .andExpect(jsonPath("$.chats[0].userCount").exists())
                     .andExpect(jsonPath("$.chats[0].createdAt").exists())
                     .andExpect(jsonPath("$.chats[0].updatedAt").exists())
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("get-chats",
+                            requestParameters(
+                                    parameterWithName("userId").description("유저 ID")
+                            ),
+                            responseFields(
+                                    fieldWithPath("chats[]").description("채팅 리스트"),
+                                    fieldWithPath("count").description("총 채팅 개수")
+                            ).andWithPrefix("chats[].", new FieldDescriptor[] {
+                                    fieldWithPath("chatId").description("채팅 ID"),
+                                    fieldWithPath("chatName").description("채팅 제목"),
+                                    fieldWithPath("userCount").description("채팅방 유저 수"),
+                                    fieldWithPath("createdAt").description("채팅 생성일"),
+                                    fieldWithPath("updatedAt").description("채팅 업데이트일"),
+                            })
+                    ));
 
         }
 
@@ -252,7 +304,13 @@ class ChatControllerTest {
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("invite-chat",
+                        requestFields(
+                                fieldWithPath("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                        )
+                ));
 
         // then
         assertThat(initChat.getChatUsers().size()).isEqualTo(3);
@@ -276,7 +334,13 @@ class ChatControllerTest {
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("exit-chat",
+                        requestFields(
+                                fieldWithPath("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("userId").description("유저 ID").attributes(Attributes.key("required").value("O"))
+                        )
+                ));
 
         // then
         assertThat(initChat.getChatUsers().size()).isEqualTo(1);
@@ -300,7 +364,13 @@ class ChatControllerTest {
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("change-chat",
+                        requestFields(
+                                fieldWithPath("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O")),
+                                fieldWithPath("name").description("채팅방 제목").attributes(Attributes.key("required").value("O"))
+                        )
+                ));;
 
         // then
         assertThat(initChat.getName()).isEqualTo("변경 제목");

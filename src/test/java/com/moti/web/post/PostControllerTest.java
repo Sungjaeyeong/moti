@@ -15,13 +15,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
+import org.springframework.restdocs.snippet.Attributes;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMultipartHttpServletRequestBuilder;
@@ -32,6 +37,9 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -40,6 +48,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@AutoConfigureRestDocs(uriScheme = "https", uriHost = "api.moti.com", uriPort = 443)
+@ExtendWith(RestDocumentationExtension.class)
 class PostControllerTest {
 
     @Autowired ObjectMapper objectMapper;
@@ -151,11 +161,22 @@ class PostControllerTest {
         @DisplayName("포스트 한개 조회")
         public void findOne() throws Exception {
             // when
-            mockMvc.perform(get("/posts/{postId}", postId)
+            mockMvc.perform(RestDocumentationRequestBuilders.get("/posts/{postId}", postId)
                     )
                     .andExpect(status().isOk())
                     .andExpect(jsonPath("$.id").value(postId))
-                    .andDo(print());
+                    .andDo(print())
+                    .andDo(document("get-post",
+                            pathParameters(parameterWithName("postId").description("포스트 ID").attributes(Attributes.key("required").value("O"))),
+                            responseFields(
+                                    fieldWithPath("id").description("포스트 ID"),
+                                    fieldWithPath("title").description("포스트 제목"),
+                                    fieldWithPath("content").description("포스트 내용"),
+                                    fieldWithPath("userId").description("포스트 작성자 ID"),
+                                    fieldWithPath("userName").description("포스트 작성자 이름"),
+                                    fieldWithPath("files").description("포스트의 첨부파일")
+                            )
+                    ));
         }
 
         @Test
@@ -200,6 +221,10 @@ class PostControllerTest {
                     )
                     .andExpect(status().isOk())
                     .andDo(print())
+                    .andDo(document("get-posts",
+                            requestParameters(parameterWithName("search").description("검색어")),
+                            responseBody()
+                    ))
                     .andReturn();
 
             String contentAsString = mvcResult.getResponse().getContentAsString();
@@ -325,12 +350,16 @@ class PostControllerTest {
         Long postId = postRepository.save(post);
 
         // when
-        mockMvc.perform(delete("/posts/{postId}", postId)
+        mockMvc.perform(RestDocumentationRequestBuilders.delete("/posts/{postId}", postId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .session(session)
                 )
                 .andExpect(status().isOk())
-                .andDo(print());
+                .andDo(print())
+                .andDo(document("delete-post",
+                        pathParameters(parameterWithName("postId").description("포스트 ID").attributes(Attributes.key("required").value("O"))),
+                        responseBody()
+                ));
 
         // then
         Long count = postRepository.count();
