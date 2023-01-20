@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,18 +27,18 @@ public class LoginController {
 
     @PostMapping("/login")
     public LoginResponseDto login(@RequestBody @Validated LoginRequestDto loginRequestDto, HttpServletRequest request, HttpServletResponse response) {
-
         log.info("loginRequestDto: {}", loginRequestDto);
 
-        User loginUser = loginService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword());
+        User loginUser = loginService.login(loginRequestDto.getEmail(), loginRequestDto.getPassword())
+                .orElseThrow(() -> new NotMatchUserException());
 
-        if (loginUser == null) {
-            throw new NotMatchUserException();
-        }
+        createSession(request, loginUser);
+        return new LoginResponseDto(loginUser);
+    }
 
+    private void createSession(HttpServletRequest request, User loginUser) {
         HttpSession session = request.getSession();
         session.setAttribute(SessionConst.LOGIN_USER, loginUser.getId());
-        return new LoginResponseDto(loginUser);
     }
 
     @PostMapping("/logout")
