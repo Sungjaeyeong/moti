@@ -3,6 +3,7 @@ package com.moti.domain.login;
 import com.moti.domain.user.UserService;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
+import com.moti.web.exception.NotMatchUserException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +37,7 @@ class LoginServiceTest {
     @DisplayName("로그인 성공 - 서비스")
     public void succeed_login() throws Exception {
         // when
-        User loginUser = loginService.login("aaa@gmail.com", "abcdef");
+        User loginUser = loginService.login("aaa@gmail.com", "abcdef").get();
 
         // then
         Assertions.assertThat(loginUser).isEqualTo(user);
@@ -46,7 +47,7 @@ class LoginServiceTest {
     @DisplayName("로그인 실패(이메일 틀림) - 서비스")
     public void failed_login1() throws Exception {
         //when
-        User notEqualPwUser = loginService.login("bbb@gmail.com", "aaaaaaa");
+        User notEqualPwUser = loginService.login("bbb@gmail.com", "aaaaaaa").orElse(null);
 
         // then
         Assertions.assertThat(notEqualPwUser).isEqualTo(null);
@@ -56,7 +57,7 @@ class LoginServiceTest {
     @DisplayName("로그인 실패(비밀번호 틀림) - 서비스")
     public void failed_login2() throws Exception {
         // when
-        User notEqualPwUser = loginService.login("aaa@gmail.com", "aaaaaaa");
+        User notEqualPwUser = loginService.login("aaa@gmail.com", "aaaaaaa").orElse(null);
 
         // then
         Assertions.assertThat(notEqualPwUser).isEqualTo(null);

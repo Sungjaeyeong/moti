@@ -31,6 +31,15 @@ public class UserRepository {
                 .findFirst();
     }
 
+    public Optional<User> findByEmailAndPW(String email, String password) {
+        return em.createQuery("select u from User u where u.email = :email and u.password = :password", User.class)
+                .setParameter("email", email)
+                .setParameter("password", password)
+                .getResultList()
+                .stream()
+                .findFirst();
+    }
+
     public List<User> findAll() {
         return em.createQuery("select u from User u", User.class)
                 .getResultList();
