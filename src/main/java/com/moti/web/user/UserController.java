@@ -52,13 +52,7 @@ public class UserController {
     public ResponseUserDto get(@SessionAttribute(name = SessionConst.LOGIN_USER) Long userId) {
 
         User findUser = userService.findOne(userId);
-        return ResponseUserDto.builder()
-                .id(findUser.getId())
-                .email(findUser.getEmail())
-                .name(findUser.getName())
-                .job(findUser.getJob())
-                .introduce(findUser.getIntroduce())
-                .build();
+        return new ResponseUserDto(findUser);
     }
 
     // 유저정보 수정
