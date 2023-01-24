@@ -52,17 +52,16 @@ public class UserController {
     public ResponseUserDto get(@SessionAttribute(name = SessionConst.LOGIN_USER) Long userId) {
 
         User findUser = userService.findOne(userId);
+
         return new ResponseUserDto(findUser);
     }
 
     // 유저정보 수정
     @PatchMapping("/{userId}")
-    public void edit(@PathVariable Long userId, @RequestBody @Validated EditUserDto editUserDto, HttpServletRequest request) {
+    public void edit(@PathVariable Long userId, @RequestBody @Validated EditUserDto editUserDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long userIdInSession) {
 
-        HttpSession session = request.getSession(false);
-        Object attribute = session.getAttribute(SessionConst.LOGIN_USER);
-        if (!attribute.equals(userId)) {
-            log.info("request session LOGIN_USER: {}", attribute);
+        if (!userId.equals(userIdInSession)) {
+            log.info("request session LOGIN_USER: {}", userIdInSession);
             throw new NotMatchLoginUserSessionException();
         }
 

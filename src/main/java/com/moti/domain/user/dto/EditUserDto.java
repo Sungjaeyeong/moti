@@ -9,14 +9,14 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor(access = AccessLevel.PROTECTED, force = true)
 public class EditUserDto {
 
     @NotBlank
-    private String name;
+    private final String name;
 
     @NotNull
-    private String introduce;
+    private final String introduce;
 
     @Builder
     public EditUserDto(String name, String introduce) {

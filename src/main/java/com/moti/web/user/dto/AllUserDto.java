@@ -7,13 +7,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(force = true)
 public class AllUserDto {
 
-  private Long id;
-  private String email;
-  private String userName;
-  private Job job;
+  private final Long id;
+  private final String email;
+  private final String userName;
+  private final Job job;
 
   @Builder
   public AllUserDto(User user) {
