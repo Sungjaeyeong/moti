@@ -41,6 +41,17 @@ public class TeamService {
         team.addTeamUser(teamUser);
     }
 
+    public List<Team> getTeams(int page, int limit, Long userId) {
+        if (userId != null) {
+            return findTeamsByUser(userId);
+        }
+        return findTeams(getOffset(page, limit), limit);
+    }
+
+    private int getOffset(int page, int limit) {
+        return page * limit - limit;
+    }
+
     // 유저가 속한 팀 조회
     public List<Team> findTeamsByUser(Long userId) {
         User user = userRepository.findOne(userId);
