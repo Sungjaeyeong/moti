@@ -42,15 +42,22 @@ public class TeamController {
                                             @RequestParam(required = false) Long userId) {
 
         List<Team> teams = teamService.getTeams(page, limit, userId);
+        List<ResponseTeamDto> responseTeamDtoList = convertToResponseTeamDtoList(teams);
 
-        List<ResponseTeamDto> responseTeamDtoList = teams.stream()
-                .map(team -> mapResponseTeamDto(team))
-                .collect(Collectors.toList());
+        return convertToResponseTeamsDto(responseTeamDtoList);
+    }
 
+    private ResponseTeamsDto convertToResponseTeamsDto(List<ResponseTeamDto> responseTeamDtoList) {
         return ResponseTeamsDto.builder()
                 .responseTeamDtoList(responseTeamDtoList)
                 .count(responseTeamDtoList.size())
                 .build();
+    }
+
+    private List<ResponseTeamDto> convertToResponseTeamDtoList(List<Team> teams) {
+        return teams.stream()
+                .map(team -> mapResponseTeamDto(team))
+                .collect(Collectors.toList());
     }
 
     // 팀 조회 (팀으로)
