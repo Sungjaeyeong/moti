@@ -34,11 +34,10 @@ public class CommentController {
 
     // 댓글 작성
     @PostMapping()
-    public WriteCommentResponseDto write(@RequestBody @Validated WriteCommentDto writeCommentDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
+    public WriteCommentResponseDto write(@RequestBody @Validated WriteCommentDto writeCommentDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
         Long userId = writeCommentDto.getUserId();
 
-        validateUserSession(session, userId);
+        validateUserSession(sessionUserId, userId);
 
         User findUser = userService.findOne(userId);
         Post findPost = postService.findOne(writeCommentDto.getPostId());
@@ -88,10 +87,8 @@ public class CommentController {
 
     // 댓글 수정
     @PatchMapping("/{commentId}")
-    public void edit(@PathVariable Long commentId, @RequestBody @Validated EditCommentDto editCommentDto, HttpServletRequest request) throws NotFoundException {
-        HttpSession session = request.getSession(false);
-
-        validateUserSession(session, editCommentDto.getUserId());
+    public void edit(@PathVariable Long commentId, @RequestBody @Validated EditCommentDto editCommentDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) throws NotFoundException {
+        validateUserSession(sessionUserId, editCommentDto.getUserId());
         validateOwnerOfComment(editCommentDto.getUserId(), commentId);
 
         commentService.edit(commentId, editCommentDto.getComment());
@@ -99,20 +96,16 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{commentId}")
-    public void edit(@PathVariable Long commentId, HttpServletRequest request) throws NotFoundException {
-        HttpSession session = request.getSession(false);
-        Long userId = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
-        validateOwnerOfComment(userId, commentId);
+    public void edit(@PathVariable Long commentId, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) throws NotFoundException {
+        validateOwnerOfComment(sessionUserId, commentId);
 
         commentService.remove(commentId);
     }
 
     // 세션의 유저와 요청 유저가 동일한지 검사
-    private void validateUserSession(HttpSession session, Long userId) {
-        Object attribute = session.getAttribute(SessionConst.LOGIN_USER);
-        if (!attribute.equals(userId)) {
-            log.info("request session LOGIN_USER: {}", attribute);
+    private void validateUserSession(Long sessionUserId, Long userId) {
+        if (!sessionUserId.equals(userId)) {
+            log.info("request session LOGIN_USER: {}", sessionUserId);
             throw new NotMatchLoginUserSessionException();
         }
     }
