@@ -46,13 +46,12 @@ public class PostController {
 
     // 포스트 작성
     @PostMapping()
-    public CreatePostResponseDto write(@ModelAttribute @Validated CreatePostDto createPostDto, HttpServletRequest request) throws IOException {
+    public CreatePostResponseDto write(@ModelAttribute @Validated CreatePostDto createPostDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) throws IOException {
 
-        HttpSession session = request.getSession(false);
         Long userId = createPostDto.getUserId();
         User findUser = userService.findOne(userId);
 
-        validateUserSession(session, userId);
+        validateUserSession(sessionUserId, userId);
 
         List<File> storeFiles = fileService.storeFiles(createPostDto.getMultipartFiles());
 
@@ -69,10 +68,9 @@ public class PostController {
     }
 
     // 세션의 유저와 요청 유저가 동일한지 검사
-    private void validateUserSession(HttpSession session, Long userId) {
-        Object attribute = session.getAttribute(SessionConst.LOGIN_USER);
-        if (!attribute.equals(userId)) {
-            log.info("request session LOGIN_USER: {}", attribute);
+    private void validateUserSession(Long sessionUserId, Long userId) {
+        if (!sessionUserId.equals(userId)) {
+            log.info("request session LOGIN_USER: {}", sessionUserId);
             throw new NotMatchLoginUserSessionException();
         }
     }
@@ -101,9 +99,8 @@ public class PostController {
 
     // 포스트 수정
     @PatchMapping("/{postId}")
-    public void edit(@PathVariable Long postId, @ModelAttribute @Validated EditPostControllerDto editPostControllerDto, HttpServletRequest request) throws IOException, NotFoundException {
-        HttpSession session = request.getSession(false);
-        validateOwnerOfPost(session, postId);
+    public void edit(@PathVariable Long postId, @ModelAttribute @Validated EditPostControllerDto editPostControllerDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) throws IOException, NotFoundException {
+        validateOwnerOfPost(sessionUserId, postId);
 
         List<File> storeFiles = fileService.storeFiles(editPostControllerDto.getMultipartFiles());
 
@@ -119,16 +116,13 @@ public class PostController {
 
     // 포스트 삭제
     @DeleteMapping("/{postId}")
-    public void delete(@PathVariable Long postId, HttpServletRequest request) throws NotFoundException {
-        HttpSession session = request.getSession(false);
-        validateOwnerOfPost(session, postId);
+    public void delete(@PathVariable Long postId, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) throws NotFoundException {
+        validateOwnerOfPost(sessionUserId, postId);
 
         postService.delete(postId);
     }
 
-    public void validateOwnerOfPost(HttpSession session, Long postId) {
-        Long sessionUserId = (Long) session.getAttribute(SessionConst.LOGIN_USER);
-
+    public void validateOwnerOfPost(Long sessionUserId, Long postId) {
         Post findPost = postService.findOne(postId);
         Long userId = findPost.getUser().getId();
 
