@@ -55,12 +55,9 @@ public class CommentController {
 
     // 포스트의 댓글 조회
     @GetMapping()
-    public CommentsResponseDto findByPost(@RequestParam(required = false) Long postId,
+    public CommentsResponseDto findByPost(@RequestParam Long postId,
                                           @RequestParam(defaultValue = "1") int page,
                                           @RequestParam(defaultValue = "5") int maxResults) throws NotFoundException {
-        if (postId == null) {
-            throw new NotFoundException("Not Found");
-        }
         Post post = postService.findOne(postId);
         if (post == null) {
             throw new NotFoundException("Not Found");
