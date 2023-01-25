@@ -31,7 +31,7 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResult methodExHandle(MethodArgumentNotValidException e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: methodExHandle", e);
 
         ErrorResult errorResult = ErrorResult.builder()
                 .code("400")
@@ -62,10 +62,10 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResult IllegalStateExHandle(IllegalStateException e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: IllegalStateExHandle", e);
 
         return ErrorResult.builder()
-                .code("404")
+                .code("400")
                 .message(e.getMessage())
                 .build();
     }
@@ -73,10 +73,10 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     public ErrorResult typeExHandle(MethodArgumentTypeMismatchException e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: typeExHandle", e);
 
         return ErrorResult.builder()
-                .code("404")
+                .code("400")
                 .message("타입을 확인해주세요.")
                 .build();
     }
@@ -84,7 +84,7 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler
     public ErrorResult notMatchUserExHandle(NotMatchUserException e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: notMatchUserExHandle", e);
 
         return ErrorResult.builder()
                 .code("401")
@@ -94,8 +94,8 @@ public class CommonControllerAdvice {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
-    public ErrorResult foundExHandle(NotFoundUserException e) {
-        log.error("[exceptionHandle] exception", e);
+    public ErrorResult notFoundUserExHandle(NotFoundUserException e) {
+        log.error("[exceptionHandle] exception: notFoundUserExHandle", e);
 
         return ErrorResult.builder()
                 .code("404")
@@ -106,7 +106,7 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.FORBIDDEN)
     @ExceptionHandler
     public ErrorResult notMatchLoginUserSessionExHandle(NotMatchLoginUserSessionException e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: notMatchLoginUserSessionExHandle", e);
 
         return ErrorResult.builder()
                 .code("403")
@@ -117,7 +117,7 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler({HttpRequestMethodNotSupportedException.class, NotFoundException.class})
     public ErrorResult notFoundExHandle(Exception e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: notFoundExHandle", e);
 
         return ErrorResult.builder()
                 .code("404")
@@ -128,7 +128,7 @@ public class CommonControllerAdvice {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler
     public ErrorResult exHandle(Exception e) {
-        log.error("[exceptionHandle] exception", e);
+        log.error("[exceptionHandle] exception: exHandle", e);
         return ErrorResult.builder()
                 .code("500")
                 .message("서버 오류")
