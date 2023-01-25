@@ -29,10 +29,7 @@ public class ChatController {
 
     // 채팅 생성
     @PostMapping
-    public CreateChatResponseDto createChat(@RequestBody @Validated CreateChatDto createChatDto, HttpServletRequest request) {
-
-        HttpSession session = request.getSession(false);
-        Long sessionUserId = (Long) session.getAttribute(SessionConst.LOGIN_USER);
+    public CreateChatResponseDto createChat(@RequestBody @Validated CreateChatDto createChatDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
 
         if (!createChatDto.getUserIds().contains(sessionUserId)) {
             log.info("request session LOGIN_USER: {}", sessionUserId);
@@ -46,10 +43,9 @@ public class ChatController {
 
     // 유저가 속한 채팅들 조회
     @GetMapping()
-    public ResponseChatsDto findUserChat(@RequestParam Long userId, HttpServletRequest request) {
+    public ResponseChatsDto findUserChat(@RequestParam Long userId, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
 
-        HttpSession session = request.getSession(false);
-        validateUserSession(session, userId);
+        validateUserSession(sessionUserId, userId);
 
         List<Chat> chats = chatService.findChatsByUser(userId);
         List<ResponseChatDto> responseChatDtos = chats.stream().map(chat -> ResponseChatDto.builder()
@@ -68,19 +64,17 @@ public class ChatController {
     }
 
     // 세션의 유저와 요청 유저가 동일한지 검사
-    private void validateUserSession(HttpSession session, Long userId) {
-        Object attribute = session.getAttribute(SessionConst.LOGIN_USER);
-        if (!attribute.equals(userId)) {
-            log.info("request session LOGIN_USER: {}", attribute);
+    private void validateUserSession(Long sessionUserId, Long userId) {
+        if (!sessionUserId.equals(userId)) {
+            log.info("request session LOGIN_USER: {}", sessionUserId);
             throw new NotMatchLoginUserSessionException();
         }
     }
 
     // 특정 채팅 조회 (메세지 포함)
     @GetMapping("{chatId}")
-    public ResponseChatWithMessageDto findChat(@PathVariable Long chatId, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        validateSession(session, chatId);
+    public ResponseChatWithMessageDto findChat(@PathVariable Long chatId, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
+        validateSession(sessionUserId, chatId);
 
         Chat chat = chatService.findChat(chatId);
 
@@ -102,37 +96,32 @@ public class ChatController {
 
     // 채팅 초대
     @PostMapping("/update/user")
-    public void inviteChat(@RequestBody @Validated InviteChatDto inviteChatDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        validateSession(session, inviteChatDto.getChatId());
+    public void inviteChat(@RequestBody @Validated InviteChatDto inviteChatDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
+        validateSession(sessionUserId, inviteChatDto.getChatId());
 
         chatService.inviteChat(inviteChatDto.getChatId(), inviteChatDto.getUserId());
     }
 
     // 채팅 나가기
     @PostMapping("/delete/user")
-    public void exitChat(@RequestBody @Validated ExitChatDto exitChatDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        validateSession(session, exitChatDto.getChatId());
+    public void exitChat(@RequestBody @Validated ExitChatDto exitChatDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
+        validateSession(sessionUserId, exitChatDto.getChatId());
 
         chatService.exitChat(exitChatDto.getChatId(), exitChatDto.getUserId());
     }
 
     // 채팅방 이름 변경
     @PostMapping("/update/name")
-    public void changeChatName(@RequestBody @Validated ChangeChatNameDto changeChatNameDto, HttpServletRequest request) {
-        HttpSession session = request.getSession(false);
-        validateSession(session, changeChatNameDto.getChatId());
+    public void changeChatName(@RequestBody @Validated ChangeChatNameDto changeChatNameDto, @SessionAttribute(name = SessionConst.LOGIN_USER) Long sessionUserId) {
+        validateSession(sessionUserId, changeChatNameDto.getChatId());
 
         chatService.changeChatName(changeChatNameDto.getChatId(), changeChatNameDto.getName());
     }
 
-    private void validateSession(HttpSession session, Long chatId) {
+    private void validateSession(Long sessionUserId, Long chatId) {
         Chat chat = chatService.findChat(chatId);
         List<Long> userIds = chat.getChatUsers().stream().map(chatUser -> chatUser.getUser().getId())
                 .collect(Collectors.toList());
-
-        Long sessionUserId = (Long) session.getAttribute(SessionConst.LOGIN_USER);
 
         if (!userIds.contains(sessionUserId)) {
             log.info("request session LOGIN_USER: {}", sessionUserId);
