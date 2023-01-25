@@ -48,14 +48,8 @@ public class ChatController {
         validateUserSession(sessionUserId, userId);
 
         List<Chat> chats = chatService.findChatsByUser(userId);
-        List<ResponseChatDto> responseChatDtos = chats.stream().map(chat -> ResponseChatDto.builder()
-                .chatId(chat.getId())
-                .chatName(chat.getName())
-                .userCount(chat.getChatUsers().size())
-                .createdAt(chat.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
-                .updatedAt(chat.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
-                .build()
-        ).collect(Collectors.toList());
+        List<ResponseChatDto> responseChatDtos = chats.stream().map(chat -> new ResponseChatDto(chat))
+                .collect(Collectors.toList());
 
         return ResponseChatsDto.builder()
                 .chats(responseChatDtos)
@@ -78,13 +72,7 @@ public class ChatController {
 
         Chat chat = chatService.findChat(chatId);
 
-        ResponseChatDto responseChatDto = ResponseChatDto.builder()
-                .chatId(chat.getId())
-                .chatName(chat.getName())
-                .userCount(chat.getChatUsers().size())
-                .createdAt(chat.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
-                .updatedAt(chat.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss")))
-                .build();
+        ResponseChatDto responseChatDto = new ResponseChatDto(chat);
 
         List<Message> messages = messageService.findMessagesByChat(chat.getId());
 

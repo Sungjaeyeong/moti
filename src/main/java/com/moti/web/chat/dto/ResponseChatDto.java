@@ -1,9 +1,12 @@
 package com.moti.web.chat.dto;
 
+import com.moti.domain.chat.entity.Chat;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.format.DateTimeFormatter;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,5 +25,13 @@ public class ResponseChatDto {
         this.userCount = userCount;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
+    }
+
+    public ResponseChatDto(Chat chat) {
+        this.chatId = chat.getId();
+        this.chatName = chat.getName();
+        this.userCount = chat.getChatUsers().size();
+        this.createdAt = chat.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
+        this.updatedAt = chat.getLastModifiedDate().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
     }
 }

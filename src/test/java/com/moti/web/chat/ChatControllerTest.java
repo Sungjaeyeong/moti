@@ -207,8 +207,8 @@ class ChatControllerTest {
                 .andDo(document("get-chat",
                         pathParameters(parameterWithName("chatId").description("채팅 ID").attributes(Attributes.key("required").value("O"))),
                         responseFields(
-                                fieldWithPath("responseChatDto").description("댓글 리스트"),
-                                fieldWithPath("messages[]").description("총 댓글 개수")
+                                fieldWithPath("responseChatDto").description("채팅 정보"),
+                                fieldWithPath("messages[]").description("메세지 리스트")
                         ).andWithPrefix("messages[].", new FieldDescriptor[] {
                                 fieldWithPath("messageId").description("메세지 ID"),
                                 fieldWithPath("userId").description("유저 ID"),
