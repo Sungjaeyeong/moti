@@ -51,8 +51,7 @@ class ChatRepositoryTest {
         em.persist(user1);
         em.persist(user2);
 
-        List<User> userList = Arrays.asList(user1, user2);
-        chat1 = Chat.createChat(userList);
+        chat1 = Chat.createChat(Arrays.asList(user1, user2));
 
         em.persist(chat1);
     }
@@ -63,9 +62,7 @@ class ChatRepositoryTest {
         // given
         saveUser3AndUser4();
 
-        List<User> userList = Arrays.asList(user3, user4);
-
-        Chat chat2 = Chat.createChat(userList);
+        Chat chat2 = Chat.createChat(Arrays.asList(user3, user4));
 
         // when
         chatRepository.save(chat2);
@@ -105,9 +102,7 @@ class ChatRepositoryTest {
         // given
         saveUser3AndUser4();
 
-        List<User> userList = Arrays.asList(user3, user4);
-
-        Chat chat2 = Chat.createChat(userList);
+        Chat chat2 = Chat.createChat(Arrays.asList(user3, user4));
 
         em.persist(chat2);
 
@@ -125,11 +120,8 @@ class ChatRepositoryTest {
         // given
         saveUser3AndUser4();
 
-        List<User> userList1 = Arrays.asList(user1, user3);
-        List<User> userList2 = Arrays.asList(user1, user4);
-
-        Chat chat2 = Chat.createChat(userList1);
-        Chat chat3 = Chat.createChat(userList2);
+        Chat chat2 = Chat.createChat(Arrays.asList(user1, user3));
+        Chat chat3 = Chat.createChat(Arrays.asList(user1, user4));
 
         em.persist(chat2);
         em.persist(chat3);
@@ -144,13 +136,8 @@ class ChatRepositoryTest {
     @Test
     @DisplayName("유저들로 채팅 조회")
     public void findByUsers() throws Exception {
-        // given
-        List<User> users = new ArrayList<>();
-        users.add(user1);
-        users.add(user2);
-
         // when
-        Chat findChat = chatRepository.findByUsers(users);
+        Chat findChat = chatRepository.findByUsers(Arrays.asList(user1, user2));
 
         // then
         List<User> userList = findChat.getChatUsers().stream()
@@ -169,6 +156,10 @@ class ChatRepositoryTest {
         // then
         Long chatCount = chatRepository.count();
         assertThat(chatCount).isEqualTo(0L);
+
+        Long chatUserCount = em.createQuery("select count(cu) from ChatUser cu", Long.class)
+                .getSingleResult();
+        assertThat(chatUserCount).isEqualTo(0L);
     }
 
     private void saveUser3AndUser4() {
