@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -69,9 +70,7 @@ public class ChatService {
         Chat chat = chatRepository.findOne(chatId);
         User user = userService.findOne(userId);
 
-        ChatUser chatUser = ChatUser.createChatUser(user);
-
-        chat.addChatUser(chatUser);
+        chat.addUsers(List.of(user));
     }
 
     // 채팅 나가기

@@ -36,14 +36,7 @@ public class Chat extends BaseEntity {
     }
 
     // 연관관계 메서드
-    public void addChatUser(ChatUser chatUser) {
-        User user = chatUser.getUser();
-        this.chatUsers.forEach(cu -> {
-            if (user.equals(cu.getUser())) {
-                throw new IllegalStateException("이미 포함된 유저입니다.");
-            }
-        });
-
+    private void addChatUser(ChatUser chatUser) {
         this.chatUsers.add(chatUser);
         chatUser.setChat(this);
     }
@@ -86,8 +79,7 @@ public class Chat extends BaseEntity {
     private void addChatUsers(List<User> userList) {
         for (User user : userList) {
             ChatUser chatUser = ChatUser.createChatUser(user);
-            this.chatUsers.add(chatUser);
-            chatUser.setChat(this);
+            addChatUser(chatUser);
         }
     }
 

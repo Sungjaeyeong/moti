@@ -50,15 +50,6 @@ class ChatRepositoryTest {
         em.persist(user2);
 
         List<User> userList = Arrays.asList(user1, user2);
-
-//        ChatUser chatUser1 = ChatUser.createChatUser(user1);
-//        ChatUser chatUser2 = ChatUser.createChatUser(user2);
-//
-//        List<ChatUser> chatUserList = new ArrayList<>();
-//        chatUserList.add(chatUser1);
-//        chatUserList.add(chatUser2);
-//
-//        chat1 = Chat.createChat(chatUserList);
         chat1 = Chat.createChat(userList);
 
         em.persist(chat1);
