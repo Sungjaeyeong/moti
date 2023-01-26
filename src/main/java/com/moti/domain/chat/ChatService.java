@@ -29,10 +29,8 @@ public class ChatService {
             throw new IllegalStateException("인원이 부족합니다.");
         }
         validateDuplicateUsers(users);
-        List<ChatUser> chatUsers = users.stream().map(user -> ChatUser.createChatUser(user))
-                .collect(Collectors.toList());
 
-        Chat chat = Chat.createChat(chatUsers);
+        Chat chat = Chat.createChat(users);
         chatRepository.save(chat);
 
         return chat;

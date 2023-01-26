@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -48,14 +49,17 @@ class ChatRepositoryTest {
         em.persist(user1);
         em.persist(user2);
 
-        ChatUser chatUser1 = ChatUser.createChatUser(user1);
-        ChatUser chatUser2 = ChatUser.createChatUser(user2);
+        List<User> userList = Arrays.asList(user1, user2);
 
-        List<ChatUser> chatUserList = new ArrayList<>();
-        chatUserList.add(chatUser1);
-        chatUserList.add(chatUser2);
-
-        chat1 = Chat.createChat(chatUserList);
+//        ChatUser chatUser1 = ChatUser.createChatUser(user1);
+//        ChatUser chatUser2 = ChatUser.createChatUser(user2);
+//
+//        List<ChatUser> chatUserList = new ArrayList<>();
+//        chatUserList.add(chatUser1);
+//        chatUserList.add(chatUser2);
+//
+//        chat1 = Chat.createChat(chatUserList);
+        chat1 = Chat.createChat(userList);
 
         em.persist(chat1);
     }
@@ -81,14 +85,9 @@ class ChatRepositoryTest {
         em.persist(user3);
         em.persist(user4);
 
-        ChatUser chatUser3 = ChatUser.createChatUser(user3);
-        ChatUser chatUser4 = ChatUser.createChatUser(user4);
+        List<User> userList = Arrays.asList(user3, user4);
 
-        List<ChatUser> chatUserList = new ArrayList<>();
-        chatUserList.add(chatUser3);
-        chatUserList.add(chatUser4);
-
-        Chat chat2 = Chat.createChat(chatUserList);
+        Chat chat2 = Chat.createChat(userList);
 
         // when
         chatRepository.save(chat2);
@@ -143,14 +142,9 @@ class ChatRepositoryTest {
         em.persist(user3);
         em.persist(user4);
 
-        ChatUser chatUser3 = ChatUser.createChatUser(user3);
-        ChatUser chatUser4 = ChatUser.createChatUser(user4);
+        List<User> userList = Arrays.asList(user3, user4);
 
-        List<ChatUser> chatUserList = new ArrayList<>();
-        chatUserList.add(chatUser3);
-        chatUserList.add(chatUser4);
-
-        Chat chat2 = Chat.createChat(chatUserList);
+        Chat chat2 = Chat.createChat(userList);
 
         em.persist(chat2);
 
@@ -183,16 +177,11 @@ class ChatRepositoryTest {
         em.persist(user3);
         em.persist(user4);
 
-        List<ChatUser> chatUserList1 = new ArrayList<>();
-        chatUserList1.add(ChatUser.createChatUser(user1));
-        chatUserList1.add(ChatUser.createChatUser(user3));
+        List<User> userList1 = Arrays.asList(user1, user3);
+        List<User> userList2 = Arrays.asList(user1, user4);
 
-        List<ChatUser> chatUserList2 = new ArrayList<>();
-        chatUserList2.add(ChatUser.createChatUser(user1));
-        chatUserList2.add(ChatUser.createChatUser(user4));
-
-        Chat chat2 = Chat.createChat(chatUserList1);
-        Chat chat3 = Chat.createChat(chatUserList2);
+        Chat chat2 = Chat.createChat(userList1);
+        Chat chat3 = Chat.createChat(userList2);
 
         em.persist(chat2);
         em.persist(chat3);

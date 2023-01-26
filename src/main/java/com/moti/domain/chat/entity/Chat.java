@@ -58,24 +58,43 @@ public class Chat extends BaseEntity {
     }
 
     // 생성 메서드
-    public static Chat createChat(List<ChatUser> chatUserList) {
-        StringBuffer str = createChatName(chatUserList);
+    public static Chat createChat(List<User> userList) {
+        StringBuffer str = createChatName(userList);
 
         Chat chat = Chat.builder()
                 .name(String.valueOf(str))
                 .build();
 
-        for (ChatUser chatUser : chatUserList) {
-            chat.addChatUser(chatUser);
-        }
+        chat.addUsers(userList);
 
         return chat;
     }
 
-    private static StringBuffer createChatName(List<ChatUser> chatUserList) {
+    public void addUsers(List<User> userList) {
+        validateDuplicatedUser(userList);
+        addChatUsers(userList);
+    }
+
+    private void validateDuplicatedUser(List<User> userList) {
+        this.chatUsers.forEach(cu -> {
+            if (userList.contains(cu.getUser())) {
+                throw new IllegalStateException("이미 포함된 유저입니다.");
+            }
+        });
+    }
+
+    private void addChatUsers(List<User> userList) {
+        for (User user : userList) {
+            ChatUser chatUser = ChatUser.createChatUser(user);
+            this.chatUsers.add(chatUser);
+            chatUser.setChat(this);
+        }
+    }
+
+    private static StringBuffer createChatName(List<User> userList) {
         StringBuffer result = new StringBuffer("");
-        for (ChatUser chatUser : chatUserList) {
-            result.append(chatUser.getUser().getName())
+        for (User user : userList) {
+            result.append(user.getName())
                     .append(", ");
         }
         result.delete(result.length()-2, result.length());

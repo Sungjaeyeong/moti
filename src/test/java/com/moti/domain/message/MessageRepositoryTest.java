@@ -13,6 +13,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
@@ -45,14 +46,9 @@ class MessageRepositoryTest {
     em.persist(user1);
     em.persist(user2);
 
-    ChatUser chatUser1 = ChatUser.createChatUser(user1);
-    ChatUser chatUser2 = ChatUser.createChatUser(user2);
+    List<User> userList = Arrays.asList(user1, user2);
 
-    List<ChatUser> chatUserList = new ArrayList<>();
-    chatUserList.add(chatUser1);
-    chatUserList.add(chatUser2);
-
-    Chat chat = Chat.createChat(chatUserList);
+    Chat chat = Chat.createChat(userList);
     em.persist(chat);
 
     Message message = Message.builder()
@@ -94,14 +90,9 @@ class MessageRepositoryTest {
     em.persist(user1);
     em.persist(user2);
 
-    ChatUser chatUser1 = ChatUser.createChatUser(user1);
-    ChatUser chatUser2 = ChatUser.createChatUser(user2);
+    List<User> userList = Arrays.asList(user1, user2);
 
-    List<ChatUser> chatUserList = new ArrayList<>();
-    chatUserList.add(chatUser1);
-    chatUserList.add(chatUser2);
-
-    Chat chat = Chat.createChat(chatUserList);
+    Chat chat = Chat.createChat(userList);
     em.persist(chat);
 
     Message message1 = Message.builder()
