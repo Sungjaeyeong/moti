@@ -28,6 +28,8 @@ class ChatRepositoryTest {
 
     User user1;
     User user2;
+    User user3;
+    User user4;
     Chat chat1;
 
     @BeforeEach
@@ -59,22 +61,7 @@ class ChatRepositoryTest {
     @DisplayName("채팅 저장")
     void save() {
         // given
-        User user3 = User.builder()
-                .email("wodud3@afd.com")
-                .password("abcdef")
-                .name("wodud3")
-                .job(Job.DEV)
-                .build();
-
-        User user4 = User.builder()
-                .email("wodud4@afd.com")
-                .password("abcdef")
-                .name("wodud4")
-                .job(Job.DEV)
-                .build();
-
-        em.persist(user3);
-        em.persist(user4);
+        saveUser3AndUser4();
 
         List<User> userList = Arrays.asList(user3, user4);
 
@@ -116,22 +103,7 @@ class ChatRepositoryTest {
     @DisplayName("모든 채팅 조회")
     public void findAll() throws Exception {
         // given
-        User user3 = User.builder()
-                .email("wodud3@afd.com")
-                .password("abcdef")
-                .name("wodud3")
-                .job(Job.DEV)
-                .build();
-
-        User user4 = User.builder()
-                .email("wodud4@afd.com")
-                .password("abcdef")
-                .name("wodud4")
-                .job(Job.DEV)
-                .build();
-
-        em.persist(user3);
-        em.persist(user4);
+        saveUser3AndUser4();
 
         List<User> userList = Arrays.asList(user3, user4);
 
@@ -151,22 +123,7 @@ class ChatRepositoryTest {
     @DisplayName("유저가 속한 채팅 조회")
     public void findChatsByUser() throws Exception {
         // given
-        User user3 = User.builder()
-                .email("wodud3@afd.com")
-                .password("abcdef")
-                .name("wodud3")
-                .job(Job.DEV)
-                .build();
-
-        User user4 = User.builder()
-                .email("wodud4@afd.com")
-                .password("abcdef")
-                .name("wodud4")
-                .job(Job.DEV)
-                .build();
-
-        em.persist(user3);
-        em.persist(user4);
+        saveUser3AndUser4();
 
         List<User> userList1 = Arrays.asList(user1, user3);
         List<User> userList2 = Arrays.asList(user1, user4);
@@ -212,6 +169,25 @@ class ChatRepositoryTest {
         // then
         Long chatCount = chatRepository.count();
         assertThat(chatCount).isEqualTo(0L);
+    }
+
+    private void saveUser3AndUser4() {
+        user3 = User.builder()
+                .email("wodud3@afd.com")
+                .password("abcdef")
+                .name("wodud3")
+                .job(Job.DEV)
+                .build();
+
+        user4 = User.builder()
+                .email("wodud4@afd.com")
+                .password("abcdef")
+                .name("wodud4")
+                .job(Job.DEV)
+                .build();
+
+        em.persist(user3);
+        em.persist(user4);
     }
 
 }
