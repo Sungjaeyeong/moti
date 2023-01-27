@@ -61,11 +61,13 @@ public class Team extends BaseEntity {
     }
 
     // 생성 메서드
-    public static Team createTeam(String name, TeamUser teamUser) {
-
-        if (teamUser.getUser().getJob() != Job.PM) {
+    public static Team createTeam(String name, User user) {
+        if (user.getJob() != Job.PM) {
             throw new CreateTeamNotAllowedException("PM만 팀을 만들 수 있습니다.");
         }
+
+        TeamUser teamUser = TeamUser.createTeamUser(user);
+
         Team team = Team.builder()
                 .name(name)
                 .status(TeamStatus.READY)

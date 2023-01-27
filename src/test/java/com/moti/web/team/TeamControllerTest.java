@@ -72,7 +72,7 @@ class TeamControllerTest {
         em.persist(user);
 
         TeamUser teamUser = TeamUser.createTeamUser(user);
-        team = Team.createTeam("team", teamUser);
+        team = Team.createTeam("team", user);
 
         em.persist(team);
 
@@ -238,13 +238,13 @@ class TeamControllerTest {
             TeamUser teamUser1 = TeamUser.createTeamUser(newUser1);
             TeamUser teamUser2 = TeamUser.createTeamUser(newUser2);
 
-            Team team1 = Team.createTeam("team1", teamUser1);
-            Team team2 = Team.createTeam("team2", teamUser1);
-            Team team3 = Team.createTeam("team3", teamUser1);
-            Team team4 = Team.createTeam("team4", teamUser1);
-            Team team5 = Team.createTeam("team5", teamUser2);
-            Team team6 = Team.createTeam("team6", teamUser2);
-            Team team7 = Team.createTeam("team7", teamUser2);
+            Team team1 = Team.createTeam("team1", newUser1);
+            Team team2 = Team.createTeam("team2", newUser1);
+            Team team3 = Team.createTeam("team3", newUser1);
+            Team team4 = Team.createTeam("team4", newUser1);
+            Team team5 = Team.createTeam("team5", newUser2);
+            Team team6 = Team.createTeam("team6", newUser2);
+            Team team7 = Team.createTeam("team7", newUser2);
 
             em.persist(team1);
             em.persist(team2);

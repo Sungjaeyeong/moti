@@ -23,8 +23,7 @@ public class TeamService {
     public Team createTeam(Long userId, String teamName) {
         User user = userRepository.findOne(userId);
 
-        TeamUser teamUser = TeamUser.createTeamUser(user);
-        Team team = Team.createTeam(teamName, teamUser);
+        Team team = Team.createTeam(teamName, user);
 
         teamRepository.save(team);
         return team;

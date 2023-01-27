@@ -37,7 +37,7 @@ class TeamRepositoryTest {
                 .build();
 
         teamUser = TeamUser.createTeamUser(user);
-        team = Team.createTeam("팀이름", teamUser);
+        team = Team.createTeam("팀이름", user);
 
         em.persist(user);
         em.persist(team);
@@ -57,7 +57,7 @@ class TeamRepositoryTest {
         em.persist(user);
 
         TeamUser teamUser = TeamUser.createTeamUser(user);
-        Team team = Team.createTeam("1팀", teamUser);
+        Team team = Team.createTeam("1팀", user);
 
         // when
         teamRepository.save(team);
@@ -86,13 +86,13 @@ class TeamRepositoryTest {
     @DisplayName("팀 전부 조회")
     public void findAll() throws Exception {
         // given
-        Team team1 = Team.createTeam("팀이름1", teamUser);
-        Team team2 = Team.createTeam("팀이름2", teamUser);
-        Team team3 = Team.createTeam("팀이름3", teamUser);
-        Team team4 = Team.createTeam("팀이름4", teamUser);
-        Team team5 = Team.createTeam("팀이름5", teamUser);
-        Team team6 = Team.createTeam("팀이름6", teamUser);
-        Team team7 = Team.createTeam("팀이름7", teamUser);
+        Team team1 = Team.createTeam("팀이름1", user);
+        Team team2 = Team.createTeam("팀이름2", user);
+        Team team3 = Team.createTeam("팀이름3", user);
+        Team team4 = Team.createTeam("팀이름4", user);
+        Team team5 = Team.createTeam("팀이름5", user);
+        Team team6 = Team.createTeam("팀이름6", user);
+        Team team7 = Team.createTeam("팀이름7", user);
 
         em.persist(team1);
         em.persist(team2);
@@ -126,7 +126,7 @@ class TeamRepositoryTest {
         em.persist(user1);
 
         TeamUser teamUser1 = TeamUser.createTeamUser(user1);
-        Team team1 = Team.createTeam("1팀", teamUser1);
+        Team team1 = Team.createTeam("1팀", user1);
 
         em.persist(team1);
 

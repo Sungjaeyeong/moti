@@ -184,13 +184,13 @@ class TeamServiceTest {
             TeamUser teamUser1 = TeamUser.createTeamUser(newUser1);
             TeamUser teamUser2 = TeamUser.createTeamUser(newUser2);
 
-            Team team1 = Team.createTeam("팀이름1", teamUser1);
-            Team team2 = Team.createTeam("팀이름2", teamUser1);
-            Team team3 = Team.createTeam("팀이름3", teamUser1);
-            Team team4 = Team.createTeam("팀이름4", teamUser1);
-            Team team5 = Team.createTeam("팀이름5", teamUser2);
-            Team team6 = Team.createTeam("팀이름6", teamUser2);
-            Team team7 = Team.createTeam("팀이름7", teamUser2);
+            Team team1 = Team.createTeam("팀이름1", newUser1);
+            Team team2 = Team.createTeam("팀이름2", newUser1);
+            Team team3 = Team.createTeam("팀이름3", newUser1);
+            Team team4 = Team.createTeam("팀이름4", newUser1);
+            Team team5 = Team.createTeam("팀이름5", newUser2);
+            Team team6 = Team.createTeam("팀이름6", newUser2);
+            Team team7 = Team.createTeam("팀이름7", newUser2);
 
             em.persist(team1);
             em.persist(team2);
