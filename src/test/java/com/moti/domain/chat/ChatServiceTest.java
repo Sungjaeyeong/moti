@@ -17,9 +17,11 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -54,11 +56,7 @@ class ChatServiceTest {
     em.persist(initUser1);
     em.persist(initUser2);
 
-    List<Long> userIds = new ArrayList<>();
-    userIds.add(initUser1.getId());
-    userIds.add(initUser2.getId());
-
-    initChat = chatService.createChat(userIds);
+    initChat = chatService.createChat(Arrays.asList(initUser1.getId(), initUser2.getId()));
   }
 
   @Nested
@@ -85,19 +83,15 @@ class ChatServiceTest {
       em.persist(user1);
       em.persist(user2);
 
-      List<Long> userIds = new ArrayList<>();
-      userIds.add(user1.getId());
-      userIds.add(user2.getId());
-
       // when
-      Chat chat = chatService.createChat(userIds);
+      Chat chat = chatService.createChat(Arrays.asList(user1.getId(), user2.getId()));
 
       // then
       List<User> chatUsers = chat.getChatUsers().stream()
               .map(chatUser -> chatUser.getUser())
               .collect(Collectors.toList());
 
-      Assertions.assertThat(chatRepository.count()).isEqualTo(2L);
+      assertThat(chatRepository.count()).isEqualTo(2L);
       assertThat(chatUsers).contains(user1, user2);
     }
 
@@ -114,11 +108,8 @@ class ChatServiceTest {
 
       em.persist(user1);
 
-      List<Long> userIds = new ArrayList<>();
-      userIds.add(user1.getId());
-
       // when
-      IllegalStateException e = assertThrows(IllegalStateException.class, () -> chatService.createChat(userIds));
+      IllegalStateException e = assertThrows(IllegalStateException.class, () -> chatService.createChat(List.of(user1.getId())));
 
       assertThat(e.getMessage()).isEqualTo("인원이 부족합니다.");
     }
@@ -144,9 +135,7 @@ class ChatServiceTest {
       em.persist(user1);
       em.persist(user2);
 
-      List<Long> userIds = new ArrayList<>();
-      userIds.add(user1.getId());
-      userIds.add(user2.getId());
+      List<Long> userIds = Arrays.asList(user1.getId(), user2.getId());
 
       // when
       chatService.createChat(userIds);
@@ -177,13 +166,8 @@ class ChatServiceTest {
     em.persist(user1);
     em.persist(user2);
 
-    List<Long> userIds1 = new ArrayList<>();
-    userIds1.add(initUser1.getId());
-    userIds1.add(user1.getId());
-
-    List<Long> userIds2 = new ArrayList<>();
-    userIds2.add(initUser1.getId());
-    userIds2.add(user2.getId());
+    List<Long> userIds1 = Arrays.asList(initUser1.getId(), user1.getId());
+    List<Long> userIds2 = Arrays.asList(initUser1.getId(), user2.getId());
 
     chatService.createChat(userIds1);
     chatService.createChat(userIds2);
@@ -235,11 +219,11 @@ class ChatServiceTest {
       chatService.inviteChat(initChat.getId(), user.getId());
 
       // then
-      List<User> users = initChat.getChatUsers().stream()
+      List<User> chatUsers = initChat.getChatUsers().stream()
               .map(chatUser -> chatUser.getUser())
               .collect(Collectors.toList());
 
-      assertThat(users).contains(user);
+      assertThat(chatUsers).contains(user);
     }
 
     @Test
@@ -268,6 +252,7 @@ class ChatServiceTest {
               .collect(Collectors.toList());
 
       assertThat(users).doesNotContain(initUser2);
+      assertThat(users.size()).isEqualTo(1);
     }
 
     @Test
@@ -298,7 +283,8 @@ class ChatServiceTest {
     chatService.deleteChat(initChat.getId());
 
     // then
-    Assertions.assertThat(chatRepository.count()).isEqualTo(0L);
+    assertThat(chatRepository.count()).isEqualTo(0L);
+
     Long chatUserCount = em.createQuery("select count(cu) from ChatUser cu", Long.class)
             .getSingleResult();
     assertThat(chatUserCount).isEqualTo(0L);
