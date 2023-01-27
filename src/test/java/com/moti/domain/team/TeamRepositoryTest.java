@@ -25,7 +25,6 @@ class TeamRepositoryTest {
 
     Team team;
     User user;
-    TeamUser teamUser;
 
     @BeforeEach
      void init() {
@@ -36,7 +35,6 @@ class TeamRepositoryTest {
                 .job(Job.PM)
                 .build();
 
-        teamUser = TeamUser.createTeamUser(user);
         team = Team.createTeam("팀이름", user);
 
         em.persist(user);
@@ -56,7 +54,6 @@ class TeamRepositoryTest {
 
         em.persist(user);
 
-        TeamUser teamUser = TeamUser.createTeamUser(user);
         Team team = Team.createTeam("1팀", user);
 
         // when
@@ -125,7 +122,6 @@ class TeamRepositoryTest {
 
         em.persist(user1);
 
-        TeamUser teamUser1 = TeamUser.createTeamUser(user1);
         Team team1 = Team.createTeam("1팀", user1);
 
         em.persist(team1);

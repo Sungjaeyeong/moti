@@ -181,9 +181,6 @@ class TeamServiceTest {
             em.persist(newUser1);
             em.persist(newUser2);
 
-            TeamUser teamUser1 = TeamUser.createTeamUser(newUser1);
-            TeamUser teamUser2 = TeamUser.createTeamUser(newUser2);
-
             Team team1 = Team.createTeam("팀이름1", newUser1);
             Team team2 = Team.createTeam("팀이름2", newUser1);
             Team team3 = Team.createTeam("팀이름3", newUser1);
