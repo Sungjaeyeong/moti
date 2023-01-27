@@ -124,10 +124,19 @@ class PostServiceTest {
     @Test
     @DisplayName("포스트 검색")
     public void search() throws Exception {
+        // given
+        Post post = Post.builder()
+                .user(user)
+                .title("제목")
+                .content("안녕하세요!")
+                .build();
+
+        postRepository.save(post);
+
         // when
         List<Post> posts = postService.findSearch("안녕하세요");
 
         // then
-        assertThat(posts.size()).isEqualTo(0);
+        assertThat(posts.size()).isEqualTo(1);
     }
 }
