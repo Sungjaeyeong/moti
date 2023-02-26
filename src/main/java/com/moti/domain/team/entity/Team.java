@@ -1,15 +1,13 @@
 package com.moti.domain.team.entity;
 
 import com.moti.domain.BaseEntity;
+import com.moti.domain.chat.entity.Chat;
 import com.moti.domain.exception.CreateTeamNotAllowedException;
 import com.moti.domain.exception.NotFoundUserException;
 import com.moti.domain.team.TeamStatus;
 import com.moti.domain.user.entity.Job;
 import com.moti.domain.user.entity.User;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +16,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@ToString
 public class Team extends BaseEntity {
 
     @Id @GeneratedValue
@@ -30,12 +29,17 @@ public class Team extends BaseEntity {
     private TeamStatus status;
 
     @OneToMany(mappedBy = "team", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TeamUser> teamUsers = new ArrayList<>();
+    private final List<TeamUser> teamUsers = new ArrayList<>();
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
 
     @Builder
-    public Team(String name, TeamStatus status) {
+    public Team(String name, TeamStatus status, Chat chat) {
         this.name = name;
         this.status = status;
+        this.chat = chat;
     }
 
     // 연관관계 메서드
@@ -67,10 +71,12 @@ public class Team extends BaseEntity {
         }
 
         TeamUser teamUser = TeamUser.createTeamUser(user);
+        Chat chat = Chat.createChat(List.of(user));
 
         Team team = Team.builder()
                 .name(name)
                 .status(TeamStatus.READY)
+                .chat(chat)
                 .build();
         team.addTeamUser(teamUser);
         return team;
