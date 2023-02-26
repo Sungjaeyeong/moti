@@ -69,6 +69,7 @@ class TeamServiceTest {
             assertThat(findTeam.getName()).isEqualTo("team1");
             assertThat(findTeam.getTeamUsers().size()).isEqualTo(1);
             assertThat(findTeam.getTeamUsers().get(0).getUser().getName()).isEqualTo("jaeyeong");
+            assertThat(findTeam.getChat().getMessages().get(0).getMessage()).isEqualTo("팀 채팅방이 생성되었습니다.");
         }
 
         @Test
