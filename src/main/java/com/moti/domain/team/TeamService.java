@@ -23,6 +23,7 @@ public class TeamService {
     private final MessageService messageService;
 
     private static final String CREATE_TEAM_SYSTEM_MSG = "팀 채팅방이 생성되었습니다.";
+    private static final String JOIN_TEAM_SYSTEM_MSG = " 님이 팀에 참여했습니다. 환영해주세요!";
 
     // 팀 생성
     @Transactional
@@ -30,10 +31,9 @@ public class TeamService {
         User user = userRepository.findOne(userId);
 
         Team team = Team.createTeam(teamName, user);
-        Chat chat = team.getChat();
 
         teamRepository.save(team);
-        messageService.createSystemMessage(CREATE_TEAM_SYSTEM_MSG, chat);
+        messageService.createSystemMessage(CREATE_TEAM_SYSTEM_MSG, team.getChat());
 
         return team;
     }
@@ -43,10 +43,10 @@ public class TeamService {
     public void joinTeam(Long userId, Long teamId) {
         Team team = teamRepository.findOne(teamId);
         User user = userRepository.findOne(userId);
-
         TeamUser teamUser = TeamUser.createTeamUser(user);
 
         team.addTeamUser(teamUser);
+        messageService.createSystemMessage(user.getName() + JOIN_TEAM_SYSTEM_MSG, team.getChat());
     }
 
     public List<Team> getTeams(int page, int limit, Long userId) {
