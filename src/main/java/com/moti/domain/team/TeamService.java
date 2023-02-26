@@ -89,6 +89,8 @@ public class TeamService {
         if (team.getTeamUsers().size() == 0) {
             teamRepository.delete(team);
         }
+
+        chatService.exitChat(team.getChat().getId(), userId);
     }
 
     // 팀 상태 변경

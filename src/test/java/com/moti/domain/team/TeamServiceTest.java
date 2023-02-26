@@ -215,6 +215,7 @@ class TeamServiceTest {
         @Test
         @DisplayName("팀 탈퇴 성공")
         public void leaveTeam() throws Exception {
+
             // when
             teamService.leaveTeam(user.getId(), team.getId());
 
@@ -224,6 +225,8 @@ class TeamServiceTest {
                     .getSingleResult();
 
             assertThat(count).isEqualTo(0L);
+
+            assertThat(team.getChat().getChatUsers().size()).isEqualTo(0);
         }
 
         @Test
