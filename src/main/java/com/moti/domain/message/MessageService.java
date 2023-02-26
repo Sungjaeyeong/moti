@@ -2,11 +2,13 @@ package com.moti.domain.message;
 
 import com.moti.domain.chat.ChatRepository;
 import com.moti.domain.chat.entity.Chat;
+import com.moti.domain.exception.NotMemberInChatException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -19,6 +21,7 @@ public class MessageService {
   // 메세지 보내기(저장)
   public Message createMessage(String messageStr, Long userId, Long chatId) {
     Chat chat = chatRepository.findOne(chatId);
+    validateUserInChat(userId, chat);
 
     Message message = Message.builder()
             .message(messageStr)
@@ -29,6 +32,16 @@ public class MessageService {
     messageRepository.save(message);
 
     return message;
+  }
+
+  private void validateUserInChat(Long userId, Chat chat) {
+    List<Long> userIds = chat.getChatUsers().stream()
+            .map(chatUser -> chatUser.getUser().getId())
+            .collect(Collectors.toList());
+
+    if (!userIds.contains(userId)) {
+      throw new NotMemberInChatException("유저가 해당 채팅방에 속해 있지 않습니다.");
+    }
   }
 
   // 메세지 삭제
