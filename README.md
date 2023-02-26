@@ -16,9 +16,10 @@ https://moti-docs.netlify.app/
 
 <summary>이미지 보기</summary>
 
-![스크린샷 2023-01-29 오전 3 45 40](https://user-images.githubusercontent.com/70836357/215336276-eaccfb5f-f2b0-4901-ab41-ab3a7667c230.png)
+![스크린샷 2023-02-27 오전 12 19 26](https://user-images.githubusercontent.com/70836357/221419665-b26db0d3-660d-416e-ac45-6be2ca6a00a4.png)
 
 </details>
 
 ##
 moti 클라이언트 리포지토리 : https://github.com/Sungjaeyeong/moti-client
+
