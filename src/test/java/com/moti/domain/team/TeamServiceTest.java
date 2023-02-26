@@ -114,6 +114,7 @@ class TeamServiceTest {
             // then
             Team findTeam = teamRepository.findTeamByTeam(team.getId());
             assertThat(findTeam.getTeamUsers().size()).isEqualTo(2);
+            assertThat(findTeam.getChat().getChatUsers().stream().map(chatUser -> chatUser.getUser())).contains(user);
             assertThat(findTeam.getChat().getMessages().stream().map(message -> message.getMessage())).contains("jaeyeong 님이 팀에 참여했습니다. 환영해주세요!");
 
             Long count = em.createQuery("select count(tu) from TeamUser tu", Long.class)

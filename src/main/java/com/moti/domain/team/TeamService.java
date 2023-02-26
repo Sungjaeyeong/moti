@@ -1,6 +1,7 @@
 package com.moti.domain.team;
 
 import com.moti.domain.chat.ChatRepository;
+import com.moti.domain.chat.ChatService;
 import com.moti.domain.chat.entity.Chat;
 import com.moti.domain.message.MessageService;
 import com.moti.domain.team.entity.Team;
@@ -21,6 +22,7 @@ public class TeamService {
     private final TeamRepository teamRepository;
     private final UserRepository userRepository;
     private final MessageService messageService;
+    private final ChatService chatService;
 
     private static final String CREATE_TEAM_SYSTEM_MSG = "팀 채팅방이 생성되었습니다.";
     private static final String JOIN_TEAM_SYSTEM_MSG = " 님이 팀에 참여했습니다. 환영해주세요!";
@@ -46,6 +48,7 @@ public class TeamService {
         TeamUser teamUser = TeamUser.createTeamUser(user);
 
         team.addTeamUser(teamUser);
+        chatService.inviteChat(team.getChat().getId(), userId);
         messageService.createSystemMessage(user.getName() + JOIN_TEAM_SYSTEM_MSG, team.getChat());
     }
 
