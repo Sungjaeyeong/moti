@@ -71,6 +71,20 @@ class MessageServiceTest {
   }
 
   @Test
+  @DisplayName("시스템 안내 메세지 생성")
+  void createSystemMessage() {
+    // when
+    Message systemMessage = messageService.createSystemMessage("시스템 메세지입니다.", initChat);
+
+    // then
+    Long messageCount = em.createQuery("select count(m) from Message m", Long.class)
+            .getSingleResult();
+
+    assertThat(messageCount).isEqualTo(2L);
+    assertThat(systemMessage.getUserId()).isNull();
+  }
+
+  @Test
   @DisplayName("메세지 보내기")
   void createMessage() {
     // when

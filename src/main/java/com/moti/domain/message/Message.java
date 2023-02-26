@@ -40,21 +40,10 @@ public class Message extends BaseEntity {
 
     @Builder
     public Message(String message, Long userId, Chat chat) {
-        validateUserInChat(userId, chat);
 
         this.message = message;
         this.userId = userId;
         this.setChat(chat);
-    }
-
-    private void validateUserInChat(Long userId, Chat chat) {
-        List<Long> userIds = chat.getChatUsers().stream()
-                .map(chatUser -> chatUser.getUser().getId())
-                .collect(Collectors.toList());
-
-        if (!userIds.contains(userId)) {
-            throw new NotMemberInChatException("유저가 해당 채팅방에 속해 있지 않습니다.");
-        }
     }
 
     public void deleteMessage(Long userId) {

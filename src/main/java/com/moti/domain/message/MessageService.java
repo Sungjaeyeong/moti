@@ -44,6 +44,18 @@ public class MessageService {
     }
   }
 
+  // 시스템 안내 메세지
+  public Message createSystemMessage(String messageStr, Chat chat) {
+    Message systemMessage = Message.builder()
+            .message(messageStr)
+            .chat(chat)
+            .build();
+
+    messageRepository.save(systemMessage);
+
+    return systemMessage;
+  }
+
   // 메세지 삭제
   public void deleteMessage(Long messageId, Long userId) {
     Message message = messageRepository.findOne(messageId);
